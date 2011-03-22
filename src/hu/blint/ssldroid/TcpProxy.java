@@ -14,6 +14,7 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * This is a modified version of the TcpTunnelGui utility
@@ -26,6 +27,7 @@ public class TcpProxy {
   int tunnelPort;
   String keyFile, keyPass;
   Relay inRelay, outRelay;
+  Thread server = null;
 
   public TcpProxy() {
   }
@@ -61,7 +63,7 @@ public class TcpProxy {
   public static final SSLSocketFactory getSocketFactory(String pkcsFile, String pwd) {
 	    if (sslSocketFactory == null) {
 	        try {
-	        	 KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
+	        	 KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("X509");
 	        	 KeyStore keyStore = KeyStore.getInstance("PKCS12");
 	        	 keyStore.load(new FileInputStream(pkcsFile), pwd.toCharArray());
    			     keyManagerFactory.init(keyStore, pwd.toCharArray());
@@ -71,10 +73,11 @@ public class TcpProxy {
 	             
 	        } catch (FileNotFoundException e) {
 	        	Log.d("SSLDroid","Error loading the client certificate file:" + e.getMessage());
+	        	//Toast.makeText(none, "SSLDroid Sulyos Errorhiba" + e.getMessage(), Toast.LENGTH_LONG).show();
 	        } catch (KeyManagementException e) {
 	            Log.d("SSLDroid","No SSL algorithm support: " + e.getMessage());
 	        } catch (NoSuchAlgorithmException e) {
-	            Log.d("SSLDroid","Exception when setting up the Naive key management.");
+	            Log.d("SSLDroid","No common SSL algorithm found: " + e.getMessage());
 	        } catch (KeyStoreException e) {
 	        	Log.d("SSLDroid","Error setting up keystore:" + e.getMessage());
 			} catch (java.security.cert.CertificateException e) {
@@ -92,19 +95,19 @@ public class TcpProxy {
     final TcpProxy ttg = new TcpProxy(listenPort, tunnelHost, tunnelPort, keyFile, keyPass);
     
     // create the server thread
-    Thread server = new Thread() {
+    server = new Thread() {
       public void run() {
         ServerSocket ss = null;
         try {
           ss = new ServerSocket(ttg.getListenPort());
+          Log.d("SSLDroid","Listening for connections on port " + ttg.getListenPort() + " ...");
         } catch (Exception e) {
-        	Log.d("SSLDroid", e.getMessage());
+        	Log.d("SSLDroid", "Error setting up listening socket: " + e.getMessage());
             //e.printStackTrace();
             System.exit(1);
         }
         while (true) {
           try {
-            Log.d("SSLDroid","Listening for connections on port " + ttg.getListenPort() + " ...");
             // accept the connection from my client
             Socket sc = ss.accept();
             Socket st;
@@ -113,7 +116,7 @@ public class TcpProxy {
 	            st = (SSLSocket) getSocketFactory(ttg.getKeyFile(), ttg.getKeyPass()).createSocket(ttg.getTunnelHost(), ttg.getTunnelPort());
 	            ((SSLSocket)st).startHandshake();
 	        } catch (Exception e) {
-	            Log.d("SSLDroid","SSL FAIL!\n" + e.toString());
+	            Log.d("SSLDroid","SSL failure: " + e.toString());
 	            st = new Socket(ttg.getTunnelHost(),ttg.getTunnelPort());
 	        }
 
@@ -126,6 +129,9 @@ public class TcpProxy {
             fromBrowserToServer.start();
             fromServerToBrowser.start();
 
+            if (server.isInterrupted())
+            	ss.close();
+            
           } catch (Exception ee) {
             Log.d("SSLDroid","Ouch: "+ ee.getMessage());
             //ee.printStackTrace();
@@ -136,6 +142,11 @@ public class TcpProxy {
     server.start();
   }
 
+  public void stop(){
+    if (server != null)
+	  server.interrupt();
+  }
+  
   public static class Relay extends Thread {
     private InputStream in;
     private OutputStream out;
@@ -151,9 +162,6 @@ public class TcpProxy {
       int n = 0;
 
       try {
-        //System.err.println(
-        //  "\n\n=== START OF A TRANSMISSION : " + dateFormat.format(new Date()) + " =======================================\n");
-
         while ((n = in.read(buf)) > 0) {
           out.write(buf, 0, n);
           out.flush();
@@ -162,28 +170,26 @@ public class TcpProxy {
             if (buf[i] == 7)
               buf[i] = '#';
           }
-
-          //String msg = new String(buf, 0, n);
-          //System.out.println(prefix + " : " + msg.length());
-          //System.err.println(msg);
+          
+          if (Thread.interrupted()) {
+              //We've been interrupted: no more serving.
+              return;
+          }
         }
       } catch (SocketException e) {
+    	  Log.d("SSLDroid", e.getMessage());
       } catch (IOException e) {
     	  Log.d("SSLDroid", e.getMessage());
-    	  //e.printStackTrace();
       } finally {
         try {
           in.close();
           out.close();
         } catch (IOException e) {
         	Log.d("SSLDroid", e.getMessage());
-        	//e.printStackTrace();
         }
       }
 
-      //System.out.println("Quiting stream proxy " + prefix + "...");
+      Log.d("SSLDroid", "Quitting stream proxy...");
     }
   }
-
-  //private static final Format dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss,SSS");
 }
