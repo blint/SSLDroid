@@ -9,8 +9,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 
 public class SSLDroidGui extends Activity implements OnClickListener {
-	private static final String TAG = "ServicesDemo";
-	Button buttonStart, buttonStop;
+	private static final String TAG = "SSLDroidGui";
+	Button buttonStart, buttonStop, showLog;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
