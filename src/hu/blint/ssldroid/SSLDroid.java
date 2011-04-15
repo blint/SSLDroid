@@ -20,7 +20,7 @@ public class SSLDroid extends Service {
 		String keyPass = "titkos";
 
 		//Toast.makeText(this, "SSLDroid Service Started", Toast.LENGTH_LONG).show();
-		createNotification("SSLDroid is running", "SSLDroid service is running");
+		createNotification(0, "SSLDroid is running", "SSLDroid service is running");
 		Log.d(TAG, "SSLDroid Service Started");
 
 		//createNotification("test", "This is a test of the emergency broadcast system");
@@ -47,15 +47,19 @@ public class SSLDroid extends Service {
 	public void onDestroy() {
 		try {
 			tp.stop();
-			NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-			notificationManager.cancel(0);
+			removeNotification(0);
 			Log.d(TAG, "SSLDroid Service Stopped");
 		} catch (Exception e) {
 			Log.d("SSLDroid", "Error stopping service: " + e.toString());
 		}
 	}
 
-	public void createNotification(String title, String text) {
+	public void removeNotification(int id){
+		NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		notificationManager.cancel(id);
+	}
+	
+	public void createNotification(int id, String title, String text) {
 		NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		Notification notification = new Notification(R.drawable.icon,
 				"SSLDroid startup", System.currentTimeMillis());
@@ -65,18 +69,6 @@ public class SSLDroid extends Service {
 		Intent intent = new Intent(this, SSLDroidGui.class);
 		PendingIntent activity = PendingIntent.getActivity(this, 0, intent, 0);
 		notification.setLatestEventInfo(this, title, text, activity);
-		notificationManager.notify(0, notification);
+		notificationManager.notify(id, notification);
 	}
 }
-
-/*
-public class MyStartupIntentReceiver extends BroadcastReceiver{
-	@Override
-	public void onReceive(Context context, Intent intent) {
-	}
-			Intent serviceIntent = new Intent();
-		serviceIntent.setAction("hu.blint.ssldroid");
-		context.startService(serviceIntent);
-	}
-
-*/
