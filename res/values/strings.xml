@@ -2,4 +2,12 @@
 <resources>
     <string name="hello">Hello World, SSLDroidGui!</string>
     <string name="app_name">SSLDroid</string>
+    <string name="service_control">Service Control</string>
+    <string name="local_port">Local port to listen on</string>
+    <string name="remote_host">Remote host to connect to</string>
+    <string name="remote_port">Remote port to connect to</string>
+    <string name="cert_file">PKCS12 file to use for auth</string>
+    <string name="empty"></string>
+    <string name="apply">Apply</string>
+    <string name="pkcspass">PKCS12 password</string>
 </resources>

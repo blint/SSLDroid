@@ -1,12 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:gravity="center">
+    <TableRow android:id="@+id/tableRow1" android:layout_width="wrap_content" android:layout_height="wrap_content">
+        <TextView android:text="@string/local_port" android:gravity="left" android:layout_height="wrap_content" android:layout_width="wrap_content" android:textSize="15sp" android:id="@+id/localportlabel"></TextView>
+        <EditText android:layout_width="70dip" android:text="@string/empty" android:id="@+id/localport" android:digits="0123456789" android:layout_height="35dip"></EditText>
+    </TableRow>
+    <TextView android:text="@string/remote_host" android:gravity="center" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="15sp" android:id="@+id/remotehostlabel"></TextView>
+    <EditText android:layout_width="wrap_content" android:id="@+id/remotehost" android:text="@string/empty" android:layout_height="35dip"></EditText>
+    <TableRow android:id="@+id/tableRow3" android:layout_width="wrap_content" android:layout_height="wrap_content">
+        <TextView android:text="@string/remote_port" android:gravity="center" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="15sp" android:id="@+id/remoteportlabel"></TextView>
+        <EditText android:text="@string/empty" android:layout_width="70dip" android:id="@+id/remoteport" android:digits="0123456789" android:layout_height="35dip"></EditText>
+    </TableRow>
+    <TextView android:text="@string/cert_file" android:gravity="center" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="15sp" android:id="@+id/certfilelabel"></TextView>
+    <EditText android:text="@string/empty" android:layout_width="wrap_content" android:layout_height="35dip" android:id="@+id/pkcsfile"></EditText>
+    <TextView android:layout_width="wrap_content" android:id="@+id/pkcspasslabel" android:layout_height="wrap_content" android:text="@string/pkcspass"></TextView>
+    <EditText android:layout_width="wrap_content" android:text="@string/empty" android:password="true" android:layout_height="35dip" android:id="@+id/pkcspass"></EditText>
+    <Button android:id="@+id/buttonApply" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/apply"></Button>
 <TextView  
     android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" android:text="SSLDroid service control" android:gravity="center" android:textSize="20sp" android:padding="20dp"/>
-<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/buttonStart" android:text="Start"></Button>
-<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Stop" android:id="@+id/buttonStop"></Button>
-</LinearLayout>
+    android:layout_height="wrap_content" android:gravity="center" android:textSize="20sp" android:padding="20dp" android:text="@string/service_control" android:id="@+id/servicecontrollabel"/>
+<TableRow android:id="@+id/tableRow2" android:layout_width="wrap_content" android:layout_height="wrap_content">
+    <Button android:id="@+id/buttonStart" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Start"></Button>
+    <Button android:id="@+id/buttonStop" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Stop"></Button>
+</TableRow>
+</TableLayout>
