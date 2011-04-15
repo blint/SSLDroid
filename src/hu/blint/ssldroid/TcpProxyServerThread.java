@@ -193,10 +193,10 @@ public class TcpProxyServerThread extends Thread {
 					((SSLSocket) st).startHandshake();
 				} catch (Exception e) {
 					Log.d("SSLDroid", "SSL failure: " + e.toString());
-					//createNotification(e.getMessage(), "SSL failure: "+e.toString());
-					Thread.sleep(10000);
-					continue;
-					//st = new Socket(ttg.getTunnelHost(), ttg.getTunnelPort());
+					//Thread.sleep(10000);
+					//continue;
+					sc.close();
+					return;
 				}
 
 				Log.d("SSLDroid", "Tunnelling port "

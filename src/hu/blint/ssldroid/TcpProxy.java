@@ -24,35 +24,6 @@ public class TcpProxy {
 	public TcpProxy() {
 	}
 
-	/*public TcpProxy(int listenPort, String tunnelHost, int tunnelPort,
-			String keyFile, String keyPass) {
-		this.listenPort = listenPort;
-		this.tunnelHost = tunnelHost;
-		this.tunnelPort = tunnelPort;
-		this.keyFile = keyFile;
-		this.keyPass = keyPass;
-	}
-
-	public int getListenPort() {
-		return listenPort;
-	}
-
-	public String getTunnelHost() {
-		return tunnelHost;
-	}
-
-	public int getTunnelPort() {
-		return tunnelPort;
-	}
-
-	public String getKeyFile() {
-		return keyFile;
-	}
-
-	public String getKeyPass() {
-		return keyPass;
-	}
-	 */
 	public void createNotification(String title, String text) {
 		try {
 			FileWriter outFile = new FileWriter("/mnt/sdcard/ssldroid.txt");
@@ -66,20 +37,13 @@ public class TcpProxy {
 		}
 	}
 
-	public void serve(int listenPort, String tunnelHost, int tunnelPort,
-			String keyFile, String keyPass) throws IOException {
-		//final TcpProxy ttg = new TcpProxy(listenPort, tunnelHost, tunnelPort,keyFile, keyPass);
-		// create the server thread
+	public void serve(int listenPort, String tunnelHost, int tunnelPort, String keyFile, String keyPass) throws IOException {
 		try {
 			ss = new ServerSocket(listenPort);
 			Log.d("SSLDroid", "Listening for connections on port "
 					+ listenPort + " ...");
-			//ttg.doLog("Listening for connections on port " + ttg.getListenPort() + " ...");
 		} catch (Exception e) {
-			Log.d("SSLDroid", "Error setting up listening socket: "
-					+ e.toString());
-			//createNotification(e.getMessage(), "Error setting up listening socket: "+e.toString());
-			//e.printStackTrace();
+			Log.d("SSLDroid", "Error setting up listening socket: " + e.toString());
 			System.exit(1);
 		}
 		server = new TcpProxyServerThread(ss, listenPort, tunnelHost, tunnelPort, keyFile, keyPass);
