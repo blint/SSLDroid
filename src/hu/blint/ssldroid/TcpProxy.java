@@ -48,6 +48,11 @@ public class TcpProxy {
 		}
 		server = new TcpProxyServerThread(ss, listenPort, tunnelHost, tunnelPort, keyFile, keyPass);
 		server.start();
+		/* try {
+			server.wait();
+		} catch (InterruptedException e) {
+			Log.d("SSLDroid", "Server thread interrupted: " + e.toString());
+		} */
 	}
 
 	public void stop() {

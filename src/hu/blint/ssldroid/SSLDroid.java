@@ -58,7 +58,7 @@ public class SSLDroid extends Service {
     	keyPass = settingPkcspass;
 		
 		//Toast.makeText(this, "SSLDroid Service Started", Toast.LENGTH_LONG).show();
-		createNotification(0, "SSLDroid is running", "SSLDroid service is running");
+		createNotification(0, true, "SSLDroid is running", "SSLDroid service is running");
 		Log.d(TAG, "SSLDroid Service Started");
 
 		//createNotification("test", "This is a test of the emergency broadcast system");
@@ -97,12 +97,13 @@ public class SSLDroid extends Service {
 		notificationManager.cancel(id);
 	}
 	
-	public void createNotification(int id, String title, String text) {
+	public void createNotification(int id, boolean persistent, String title, String text) {
 		NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		Notification notification = new Notification(R.drawable.icon,
 				"SSLDroid startup", System.currentTimeMillis());
 		// Hide the notification after its selected
-		//notification.flags |= Notification.FLAG_AUTO_CANCEL;
+		if (persistent == true)
+			notification.flags |= Notification.FLAG_NO_CLEAR;
 
 		Intent intent = new Intent(this, SSLDroidGui.class);
 		PendingIntent activity = PendingIntent.getActivity(this, 0, intent, 0);
