@@ -58,7 +58,7 @@ public class SSLDroid extends Service {
     	keyPass = settingPkcspass;
 		
 		//Toast.makeText(this, "SSLDroid Service Started", Toast.LENGTH_LONG).show();
-		createNotification(0, true, "SSLDroid is running", "SSLDroid service is running");
+		createNotification(0, true, "SSLDroid is running", listenPort+"->"+targetHost+":"+targetPort);
 		Log.d(TAG, "SSLDroid Service Started");
 
 		//createNotification("test", "This is a test of the emergency broadcast system");
