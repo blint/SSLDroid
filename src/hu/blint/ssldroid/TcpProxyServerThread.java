@@ -23,6 +23,8 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import android.util.Log;
 
@@ -53,7 +55,20 @@ public class TcpProxyServerThread extends Thread {
 		}
 	}*/
 	
-	
+	// Create a trust manager that does not validate certificate chains
+	TrustManager[] trustAllCerts = new TrustManager[]{
+	    new X509TrustManager() {
+	        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+	            return null;
+	        }
+	        public void checkClientTrusted(
+	            java.security.cert.X509Certificate[] certs, String authType) {
+	        }
+	        public void checkServerTrusted(
+	            java.security.cert.X509Certificate[] certs, String authType) {
+	        }
+	    }
+	};	
 	
 	private static SSLSocketFactory sslSocketFactory;
 
@@ -66,7 +81,7 @@ public class TcpProxyServerThread extends Thread {
 				keyStore.load(new FileInputStream(pkcsFile), pwd.toCharArray());
 				keyManagerFactory.init(keyStore, pwd.toCharArray());
 				SSLContext context = SSLContext.getInstance("TLS");
-				context.init(keyManagerFactory.getKeyManagers(), null,
+				context.init(keyManagerFactory.getKeyManagers(), trustAllCerts,
 						new SecureRandom());
 				sslSocketFactory = (SSLSocketFactory) context.getSocketFactory();
 

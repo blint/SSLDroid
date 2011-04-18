@@ -12,7 +12,7 @@ public class SSLDroid extends Service {
 
 	final String TAG = "SSLDroid";
 	public static final String PREFS_NAME = "MyPrefsFile";
-	TcpProxy tp;
+	TcpProxy tp[];
 
 	@Override
 	public void onCreate() {
@@ -63,11 +63,14 @@ public class SSLDroid extends Service {
 
 		//createNotification("test", "This is a test of the emergency broadcast system");
 
-		tp = new TcpProxy();
+		tp = new TcpProxy[2];
 		try {
-			tp.serve(listenPort, targetHost, targetPort, keyFile, keyPass);
+			tp[0] = new TcpProxy();
+			tp[0].serve(listenPort, targetHost, targetPort, keyFile, keyPass);
+			tp[1] = new TcpProxy();
+			tp[1].serve(9998, "imaps.balabit.hu", 993, keyFile, keyPass);
 		} catch (Exception e) {
-			Log.d(TAG, "Error" + e.toString());
+			Log.d(TAG, "Error:" + e.toString());
 		}
 	}
 	
@@ -84,7 +87,9 @@ public class SSLDroid extends Service {
 	@Override
 	public void onDestroy() {
 		try {
-			tp.stop();
+			for (TcpProxy proxy : tp) {
+	            proxy.stop();
+	        }
 			removeNotification(0);
 			Log.d(TAG, "SSLDroid Service Stopped");
 		} catch (Exception e) {
