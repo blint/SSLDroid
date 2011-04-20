@@ -46,16 +46,8 @@ public class TcpProxyServerThread extends Thread {
 		this.ss = ss;
 	}
 	
-	/*@Override
-	public static void yield(){
-		try {
-			ss.close();
-		} catch (IOException e) {
-			Log.d("SSLDroid", "Error loading the client certificate file:" + e.toString());
-		}
-	}*/
-	
 	// Create a trust manager that does not validate certificate chains
+	// TODO: handle this somehow properly (popup if cert is untrusted?)
 	TrustManager[] trustAllCerts = new TrustManager[]{
 	    new X509TrustManager() {
 	        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
@@ -88,55 +80,23 @@ public class TcpProxyServerThread extends Thread {
 			} catch (FileNotFoundException e) {
 				Log.d("SSLDroid", "Error loading the client certificate file:"
 						+ e.toString());
-				createNotification(e.getMessage(), e.toString());
-				//log += "Error loading the client certificate file:" + e.toString() + "\n";
-				// Toast.makeText(none, "SSLDroid Sulyos Errorhiba" +
-				// e.toString(), Toast.LENGTH_LONG).show();
 			} catch (KeyManagementException e) {
 				Log.d("SSLDroid", "No SSL algorithm support: " + e.toString());
-				createNotification(e.getMessage(), e.toString());
-				//log += "No SSL algorithm support: " + e.toString() + "\n";
 			} catch (NoSuchAlgorithmException e) {
 				Log.d("SSLDroid", "No common SSL algorithm found: " + e.toString());
-				createNotification(e.getMessage(), e.toString());
-				//log += "No common SSL algorithm found: " + e.toString() + "\n";
 			} catch (KeyStoreException e) {
 				Log.d("SSLDroid", "Error setting up keystore:" + e.toString());
-				createNotification(e.getMessage(), e.toString());
-				//log += "Error setting up keystore:" + e.toString() + "\n";
 			} catch (java.security.cert.CertificateException e) {
-				Log.d("SSLDroid", "Error loading the client certificate:"
-						+ e.toString());
-				createNotification(e.getMessage(), e.toString());
-				//log += "Error loading the client certificate:" + e.toString() + "\n";
+				Log.d("SSLDroid", "Error loading the client certificate:" + e.toString());
 			} catch (IOException e) {
-				Log.d("SSLDroid", "Error loading the client certificate file:"
-						+ e.toString());
-				createNotification(e.getMessage(), e.toString());
-				//log += "Error loading the client certificate file:" + e.toString() + "\n";
+				Log.d("SSLDroid", "Error loading the client certificate file:" + e.toString());
 			} catch (UnrecoverableKeyException e) {
-				Log.d("SSLDroid", "Error loading the client certificate:"
-						+ e.toString());
-				createNotification(e.getMessage(), e.toString());
-				//log += "Error loading the client certificate:" + e.toString() + "\n";
+				Log.d("SSLDroid", "Error loading the client certificate:" + e.toString());
 			}
 		}
 		return sslSocketFactory;
 	}
 		    
-	public void createNotification(String title, String text) {
-		try {
-			FileWriter outFile = new FileWriter("/mnt/sdcard/ssldroid.txt");
-			PrintWriter out = new PrintWriter(outFile);
-			Date date= new Date();
-            
-			out.println(new Timestamp(date.getTime())+" "+title+" "+text);
-			out.close();
-		} catch (IOException e){
-			return;
-		}
-	}
-
 	public class Relay extends Thread {
 		private InputStream in;
 		private OutputStream out;
@@ -168,17 +128,14 @@ public class TcpProxyServerThread extends Thread {
 				}
 			} catch (SocketException e) {
 				Log.d("SSLDroid", e.toString());
-				createNotification(e.getMessage(), e.toString());
 			} catch (IOException e) {
 				Log.d("SSLDroid", e.toString());
-				createNotification(e.getMessage(), e.toString());
 			} finally {
 				try {
 					in.close();
 					out.close();
 				} catch (IOException e) {
 					Log.d("SSLDroid", e.toString());
-					createNotification(e.getMessage(), e.toString());
 				}
 			}
 			Log.d("SSLDroid", "Quitting stream proxy...");
@@ -238,8 +195,6 @@ public class TcpProxyServerThread extends Thread {
 
 			} catch (Exception ee) {
 				Log.d("SSLDroid", "Ouch: " + ee.getMessage());
-				createNotification(ee.getMessage(), "Ouch: "+ee.toString());
-				//ttg.doLog("Ouch: " + ee.toString());
 			}
 		}
 	}
