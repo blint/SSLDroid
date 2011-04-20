@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:enabled="true" android:title="@string/add_tunnel" android:id="@+id/addtunnel" android:icon="@android:drawable/ic_menu_add"></item>
+    
+    <item android:enabled="true" android:id="@+id/startservice" android:title="@string/start_service" android:icon="@android:drawable/ic_menu_manage"></item><item android:title="@string/stop_service" android:enabled="true" android:id="@+id/stopservice" android:icon="@android:drawable/ic_menu_close_clear_cancel"></item>
+</menu>

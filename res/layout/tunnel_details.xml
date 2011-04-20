@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="fill_parent" android:layout_width="fill_parent"
+	android:scrollbars="vertical">
+	<TableLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:paddingLeft="10dip"
+		android:paddingRight="10dip">
+		<TableRow>
+			<TextView android:text="@string/connection_name"
+				android:paddingRight="10dip" android:gravity="right|center_vertical"
+				android:textAppearance="?android:attr/textAppearanceMedium" />
+
+			<EditText android:id="@+id/name" android:hint="Internal Webserver"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:singleLine="true" android:layout_weight="1" />
+		</TableRow>
+		<TableRow>
+			<TextView android:text="@string/local_port"
+				android:paddingRight="10dip" android:gravity="right|center_vertical"
+				android:textAppearance="?android:attr/textAppearanceMedium" />
+
+			<EditText android:id="@+id/localport" android:hint="8080"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:layout_weight="1" android:inputType="number" />
+		</TableRow>
+		<TableRow>
+			<TextView android:text="@string/remote_host"
+				android:paddingRight="10dip" android:gravity="right|center_vertical"
+				android:textAppearance="?android:attr/textAppearanceMedium" />
+
+			<EditText android:id="@+id/remotehost" android:hint="example.com"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:layout_weight="1" android:inputType="textEmailAddress" />
+		</TableRow>
+		<TableRow>
+			<TextView android:text="@string/remote_port"
+				android:paddingRight="10dip" android:gravity="right|center_vertical"
+				android:textAppearance="?android:attr/textAppearanceMedium" />
+
+			<EditText android:id="@+id/remoteport" android:hint="443"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:layout_weight="1" android:inputType="number" />
+		</TableRow>
+		<TableRow>
+			<TextView android:text="@string/cert_file"
+				android:paddingRight="10dip" android:gravity="right|center_vertical"
+				android:textAppearance="?android:attr/textAppearanceMedium" />
+
+			<EditText android:id="@+id/pkcsfile" android:hint="client.p12"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:layout_weight="1" android:inputType="textEmailAddress" />
+			<Button android:text="..." android:layout_width="wrap_content" android:id="@+id/pickFile" android:layout_height="wrap_content"></Button>
+			
+		</TableRow>
+		<TableRow>
+			<TextView android:text="@string/pkcspass"
+				android:paddingRight="10dip" android:gravity="right|center_vertical"
+				android:textAppearance="?android:attr/textAppearanceMedium" />
+
+			<EditText android:id="@+id/pkcspass" android:layout_width="fill_parent"
+				android:layout_height="wrap_content" android:layout_weight="1"
+				android:password="true" android:hint="Not mandatory" />
+		</TableRow>
+		<TableRow android:gravity="center">
+		<Button android:layout_width="fill_parent" android:layout_height="fill_parent" android:gravity="center" android:textAppearance="?android:attr/textAppearanceMedium" android:text="@string/apply" android:id="@+id/tunnel_apply_button"></Button>
+		</TableRow>
+	</TableLayout>
+</ScrollView>

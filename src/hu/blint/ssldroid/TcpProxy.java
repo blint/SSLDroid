@@ -68,5 +68,8 @@ public class TcpProxy {
 		Log.d("SSLDroid", "Stopping service");
 	}
 
+	public boolean isAlive(){
+		return ss.isBound();
+	}
 
 }

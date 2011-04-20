@@ -9,6 +9,8 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
+		<activity android:name=".SSLDroidTunnelDetails"
+			android:windowSoftInputMode="stateVisible|adjustResize" />
 		<service android:enabled="true" android:name="SSLDroid">
 			<intent-filter>
 				<action android:name="hu.blint.ssldroid.SSLDroid" />

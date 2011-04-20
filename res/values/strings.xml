@@ -3,11 +3,17 @@
     <string name="hello">Hello World, SSLDroidGui!</string>
     <string name="app_name">SSLDroid</string>
     <string name="service_control">Service Control</string>
-    <string name="local_port">Local port to listen on</string>
-    <string name="remote_host">Remote host to connect to</string>
-    <string name="remote_port">Remote port to connect to</string>
-    <string name="cert_file">PKCS12 file to use for auth</string>
+    <string name="local_port">Local port</string>
+    <string name="remote_host">Remote host</string>
+    <string name="remote_port">Remote port</string>
+    <string name="cert_file">PKCS12 file</string>
     <string name="empty"></string>
     <string name="apply">Apply</string>
-    <string name="pkcspass">PKCS12 password</string>
+    <string name="pkcspass">PKCS12 pass</string>
+    <string name="connection_name">Tunnel name</string>
+    <string name="add_tunnel">Add tunnel</string>
+    <string name="stop_service">Stop service</string>
+    <string name="start_service">Start service</string>
+    <string name="no_tunnels">No tunnels configured yet</string>
+    <string name="menu_delete">Delete tunnel</string>
 </resources>

@@ -1,124 +1,143 @@
 package hu.blint.ssldroid;
 
-import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
+import hu.blint.ssldroid.db.SSLDroidDbAdapter;
 
-public class SSLDroidGui extends Activity implements OnClickListener {
-	private static final String TAG = "SSLDroidGui";
-	public static final String PREFS_NAME = "MyPrefsFile";
-	Button buttonStart, buttonStop, buttonApply;
+public class SSLDroidGui extends ListActivity {
+	private SSLDroidDbAdapter dbHelper;
+	private static final int ACTIVITY_CREATE = 0;
+	private static final int ACTIVITY_EDIT = 1;
+	private static final int DELETE_ID = Menu.FIRST + 1;
+	private Cursor cursor;
 
-	public boolean saveSettings(){
-	      SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-	      SharedPreferences.Editor editor = settings.edit();
-	      
-	      TextView localport = (TextView) findViewById(R.id.localport);
-	      TextView remotehost = (TextView) findViewById(R.id.remotehost);
-	      TextView remoteport = (TextView) findViewById(R.id.remoteport);
-	      TextView pkcsfile = (TextView) findViewById(R.id.pkcsfile);
-	      TextView pkcspass = (TextView) findViewById(R.id.pkcspass);
-	      
-		  String settingLocalport = localport.getText().toString();
-		  String settingRemotehost = remotehost.getText().toString();
-		  String settingRemoteport = remoteport.getText().toString();
-		  String settingPkcsfile = pkcsfile.getText().toString();
-		  String settingPkcspass = pkcspass.getText().toString();
-	      
-		  if (settingLocalport.length() == 0) {
-			  Toast.makeText(this, "Required local port parameter not setup, skipping save", 5).show();
-			  return false;
-		  }
-		  if (settingRemotehost.length() == 0){
-			  Toast.makeText(this, "Required remote host parameter not setup, skipping save", 5).show();
-			  return false;
-		  }
-		  if (settingRemoteport.length() == 0){
-			  Toast.makeText(this, "Required remote port parameter not setup, skipping save", 5).show();
-			  return false;
-		  }
-		  if (settingPkcsfile.length() == 0){
-			  Toast.makeText(this, "Required PKCS12 file parameter not setup, skipping save", 5).show();
-			  return false;
-		  }	  
-		  editor.putInt("0.localPort", Integer.parseInt(settingLocalport));
-		  //Log.d(TAG, "settingSave: '"+ settingLocalport+"'");
-		  editor.putString("0.remoteHost", settingRemotehost);
-		  //Log.d(TAG, "settingSave: '"+ settingRemotehost+"'");
-		  editor.putInt("0.remotePort", Integer.parseInt(settingRemoteport));
-		  //Log.d(TAG, "settingSave: '"+ settingRemoteport+"'");
-		  editor.putString("0.pkcsFile", settingPkcsfile);
-		  //Log.d(TAG, "settingSave: '"+ settingPkcsfile+"'");
-		  editor.putString("0.pkcsPass", settingPkcspass);
-		  //Log.d(TAG, "settingSave: '"+ settingPkcspass+"'");
-		  editor.commit();
-		  return true;
-	}
-	
+	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
-
-		buttonStart = (Button) findViewById(R.id.buttonStart);
-		buttonStop = (Button) findViewById(R.id.buttonStop);
-		buttonApply = (Button) findViewById(R.id.buttonApply);
-
-		buttonStart.setOnClickListener(this);
-		buttonStop.setOnClickListener(this);
-		buttonApply.setOnClickListener(this);
-		
-	    TextView localport = (TextView) findViewById(R.id.localport);
-	    TextView remotehost = (TextView) findViewById(R.id.remotehost);
-	    TextView remoteport = (TextView) findViewById(R.id.remoteport);
-	    TextView pkcsfile = (TextView) findViewById(R.id.pkcsfile);
-	    TextView pkcspass = (TextView) findViewById(R.id.pkcspass);
-		
-	    // Restore preferences
-	    SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-	    int settingLocalport = settings.getInt("0.localPort", 0);
-	    String settingRemotehost = settings.getString("0.remoteHost", "");
-	    int settingRemoteport = settings.getInt("0.remotePort", 0);
-	    String settingPkcsfile = settings.getString("0.pkcsFile", "");
-	    String settingPkcspass = settings.getString("0.pkcsPass", "");
-	    
-	    if (settingLocalport!=0)
-	    	localport.setText(String.valueOf(settingLocalport));
-	    if (settingRemotehost!="")
-	    	remotehost.setText(settingRemotehost);
-	    if (settingRemoteport!=0)
-	    	remoteport.setText(String.valueOf(settingRemoteport));
-	    if (settingPkcsfile!="")
-	    	pkcsfile.setText(settingPkcsfile);
-	    if (settingPkcspass!="")
-	    	pkcspass.setText(settingPkcspass);	    
+		setContentView(R.layout.tunnel_list);
+		this.getListView().setDividerHeight(2);
+		dbHelper = new SSLDroidDbAdapter(this);
+		dbHelper.open();
+		fillData();
+		registerForContextMenu(getListView());
 	}
 
-	public void onClick(View src) {
-		switch (src.getId()) {
-		case R.id.buttonStart:
-			Log.d(TAG, "Starting service");
-			startService(new Intent(this, SSLDroid.class));
-			break;
-		case R.id.buttonStop:
-			Log.d(TAG, "Stopping service");
+	// Create the menu based on the XML defintion
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main, menu);
+		return true;
+	}
+
+	// Reaction to the menu selection
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.addtunnel:
+			createTunnel();
+			return true;
+	    case R.id.stopservice:
+			Log.d("SSLDroid", "Stopping service");
 			stopService(new Intent(this, SSLDroid.class));
-			break;
-		case R.id.buttonApply:
-			Log.d(TAG, "Saving settings...");
-			if (saveSettings()){
-				Log.d(TAG, "Restarting service after setting save");
-				stopService(new Intent(this, SSLDroid.class));
-				startService(new Intent(this, SSLDroid.class));
-			}
-			break;
+	        return true;
+	    case R.id.startservice:
+			Log.d("SSLDroid", "Starting service");
+			startService(new Intent(this, SSLDroid.class));
+	        return true;
 		}
+		return super.onMenuItemSelected(featureId, item);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.addtunnel:
+			createTunnel();
+			return true;
+	    case R.id.stopservice:
+			Log.d("SSLDroid", "Stopping service");
+			stopService(new Intent(this, SSLDroid.class));
+	        return true;
+	    case R.id.startservice:
+			Log.d("SSLDroid", "Starting service");
+			startService(new Intent(this, SSLDroid.class));
+	        return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case DELETE_ID:
+			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+					.getMenuInfo();
+			dbHelper.deleteTunnel(info.id);
+			fillData();
+			return true;
+		}
+		return super.onContextItemSelected(item);
+	}
+
+	private void createTunnel() {
+		Intent i = new Intent(this, SSLDroidTunnelDetails.class);
+		startActivityForResult(i, ACTIVITY_CREATE);
+	}
+
+	// ListView and view (row) on which was clicked, position and
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		super.onListItemClick(l, v, position, id);
+		Intent i = new Intent(this, SSLDroidTunnelDetails.class);
+		i.putExtra(SSLDroidDbAdapter.KEY_ROWID, id);
+		// Activity returns an result if called with startActivityForResult
+		
+		startActivityForResult(i, ACTIVITY_EDIT);
+	}
+
+	// Called with the result of the other activity
+	// requestCode was the origin request code send to the activity
+	// resultCode is the return code, 0 is everything is ok
+	// intend can be use to get some data from the caller
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode,
+			Intent intent) {
+		super.onActivityResult(requestCode, resultCode, intent);
+		fillData();
+
+	}
+
+	private void fillData() {
+		cursor = dbHelper.fetchAllTunnels();
+		startManagingCursor(cursor);
+
+		String[] from = new String[] { SSLDroidDbAdapter.KEY_NAME };
+		int[] to = new int[] { R.id.text1 };
+
+		// Now create an array adapter and set it to display using our row
+		SimpleCursorAdapter tunnels = new SimpleCursorAdapter(this,
+				R.layout.tunnel_list_item, cursor, from, to);
+		setListAdapter(tunnels);
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		menu.add(0, DELETE_ID, 0, R.string.menu_delete);
 	}
 }
