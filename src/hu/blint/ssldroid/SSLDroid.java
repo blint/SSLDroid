@@ -11,7 +11,6 @@ import hu.blint.ssldroid.db.SSLDroidDbAdapter;
 public class SSLDroid extends Service {
 
 	final String TAG = "SSLDroid";
-	public static final String PREFS_NAME = "SSLDroid";
 	TcpProxy tp[];
 	private SSLDroidDbAdapter dbHelper;
 
@@ -44,11 +43,15 @@ public class SSLDroid extends Service {
 			String keyPass = cursor.getString(cursor
 					.getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_PKCSPASS));
 			try {
-				tp[i] = new TcpProxy();
-				tp[i].serve(listenPort, targetHost, targetPort, keyFile, keyPass);
+				tp[i] = new TcpProxy(listenPort, targetHost, targetPort, keyFile, keyPass);
+				tp[i].serve();
 				Log.d(TAG, "Tunnel: "+listenPort+" "+targetHost+" "+targetPort+" "+keyFile);
 			} catch (Exception e) {
 				Log.d(TAG, "Error:" + e.toString());
+				new AlertDialog.Builder(SSLDroid.this)
+                .setTitle("SSLDroid encountered a fatal error: "+e.getMessage())
+                .setPositiveButton(android.R.string.ok, null)
+                .create();
 			}
 		}
 	    

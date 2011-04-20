@@ -17,19 +17,25 @@ public class TcpProxy {
 	Thread server = null;
 	ServerSocket ss = null;
 
-	public TcpProxy() {
+	public TcpProxy(int listenPort, String targetHost, int targetPort, String keyFile, String keyPass) {
+		this.listenPort = listenPort;
+		this.tunnelHost = targetHost;
+		this.tunnelPort = targetPort;
+		this.keyFile = keyFile;
+		this.keyPass = keyPass;
 	}
 
-	public void serve(int listenPort, String tunnelHost, int tunnelPort, String keyFile, String keyPass) throws IOException {
+	public void serve() throws IOException {
 		try {
 			ss = new ServerSocket(listenPort);
 			Log.d("SSLDroid", "Listening for connections on port "
-					+ listenPort + " ...");
+					+ this.listenPort + " ...");
 		} catch (Exception e) {
 			Log.d("SSLDroid", "Error setting up listening socket: " + e.toString());
-			System.exit(1);
+			return;
 		}
-		server = new TcpProxyServerThread(ss, listenPort, tunnelHost, tunnelPort, keyFile, keyPass);
+		server = new TcpProxyServerThread(this.ss, this.listenPort, this.tunnelHost, 
+										  this.tunnelPort, this.keyFile, this.keyPass);
 		server.start();
 	}
 
@@ -43,7 +49,7 @@ public class TcpProxy {
 				Log.d("SSLDroid", "Interrupt failure: " + e.toString());
 			}
 		}
-		Log.d("SSLDroid", "Stopping service");
+		Log.d("SSLDroid", "Stopping tunnel "+this.listenPort+":"+this.tunnelHost+":"+this.tunnelPort);
 	}
 
 	//if the listening socket is still active, we're alive

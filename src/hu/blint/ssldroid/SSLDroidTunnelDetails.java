@@ -129,7 +129,6 @@ public class SSLDroidTunnelDetails extends Activity {
 			.setItems(namesList, new OnClickListener() {
 				public void onClick(DialogInterface arg0, int arg1) {
 					String name = namesList[arg1];
-
 					pkcsfile.setText(sdcard+"/"+name);
 				}
 			})
@@ -165,7 +164,7 @@ public class SSLDroidTunnelDetails extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		//saveState();
+		saveState();
 	}
 
 	@Override

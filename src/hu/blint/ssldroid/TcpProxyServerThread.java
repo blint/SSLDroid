@@ -112,6 +112,12 @@ public class TcpProxyServerThread extends Thread {
 					if (Thread.interrupted()) {
 						// We've been interrupted: no more relaying
 						Log.d("SSLDroid", "Interrupted thread");
+						try {
+							in.close();
+							out.close();
+						} catch (IOException e) {
+							Log.d("SSLDroid", e.toString());
+						}
 						return;
 					}
 					out.write(buf, 0, n);
@@ -149,9 +155,9 @@ public class TcpProxyServerThread extends Thread {
 					Log.d("SSLDroid", "Interrupted server thread, closing sockets...");
 					ss.close();
 					if (fromBrowserToServer != null)
-						fromBrowserToServer.wait();
+						fromBrowserToServer.notify();
 					if (fromServerToBrowser != null)
-						fromServerToBrowser.wait();
+						fromServerToBrowser.notify();
 					return;
 				}
 				// accept the connection from my client
@@ -165,22 +171,27 @@ public class TcpProxyServerThread extends Thread {
 				Socket st = null;
 				
 				try {
-					st = (SSLSocket) getSocketFactory(keyFile, keyPass).createSocket(tunnelHost, tunnelPort);
+					st = (SSLSocket) getSocketFactory(this.keyFile, this.keyPass).createSocket(this.tunnelHost, this.tunnelPort);
 					((SSLSocket) st).startHandshake();
-				} catch (Exception e) {
+				} catch (IOException e){
+					
+				}
+				catch (Exception e) {
 					Log.d("SSLDroid", "SSL failure: " + e.toString());
-					//Thread.sleep(10000);
-					//continue;
 					sc.close();
 					return;
 				}
 
+				if (sc == null){
+					Log.d("SSLDroid", "Trying socket operation on a null socket, returning");
+					return;
+				}
 				Log.d("SSLDroid", "Tunnelling port "
 						+ listenPort + " to port "
 						+ tunnelPort + " on host "
 						+ tunnelHost + " ...");
 				
-				// relay the stuff thru
+				// relay the stuff through
 				fromBrowserToServer = new Relay(
 						sc.getInputStream(), st.getOutputStream());
 				fromServerToBrowser = new Relay(
