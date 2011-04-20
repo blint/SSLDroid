@@ -74,11 +74,11 @@ public class SSLDroid extends Service {
 			for (TcpProxy proxy : tp) {
 	            proxy.stop();
 	        }
-			removeNotification(0);
-			Log.d(TAG, "SSLDroid Service Stopped");
 		} catch (Exception e) {
 			Log.d("SSLDroid", "Error stopping service: " + e.toString());
 		}
+		removeNotification(0);
+		Log.d(TAG, "SSLDroid Service Stopped");
 	}
 
 	public void removeNotification(int id){

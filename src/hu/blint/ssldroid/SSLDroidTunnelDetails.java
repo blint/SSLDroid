@@ -104,7 +104,7 @@ public class SSLDroidTunnelDetails extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		saveState();
+		//saveState();
 	}
 
 	@Override
