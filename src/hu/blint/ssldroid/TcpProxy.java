@@ -1,11 +1,7 @@
 package hu.blint.ssldroid;
 
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
-import java.sql.Timestamp;
-import java.util.Date;
 
 import android.util.Log;
 
@@ -24,19 +20,6 @@ public class TcpProxy {
 	public TcpProxy() {
 	}
 
-	public void createNotification(String title, String text) {
-		try {
-			FileWriter outFile = new FileWriter("/mnt/sdcard/ssldroid.txt");
-			PrintWriter out = new PrintWriter(outFile);
-			Date date= new Date();
-            
-			out.println(new Timestamp(date.getTime())+" "+title+" "+text);
-			out.close();
-		} catch (IOException e){
-			return;
-		}
-	}
-
 	public void serve(int listenPort, String tunnelHost, int tunnelPort, String keyFile, String keyPass) throws IOException {
 		try {
 			ss = new ServerSocket(listenPort);
@@ -48,26 +31,22 @@ public class TcpProxy {
 		}
 		server = new TcpProxyServerThread(ss, listenPort, tunnelHost, tunnelPort, keyFile, keyPass);
 		server.start();
-		/* try {
-			server.wait();
-		} catch (InterruptedException e) {
-			Log.d("SSLDroid", "Server thread interrupted: " + e.toString());
-		} */
 	}
 
 	public void stop() {
 		if (server != null){
 			try {
+				//close the server socket and interrupt the server thread
 				ss.close();
 				server.interrupt();
 			} catch (Exception e) {
 				Log.d("SSLDroid", "Interrupt failure: " + e.toString());
-				createNotification(e.getMessage(), "Ouch: "+e.toString());;
 			}
 		}
 		Log.d("SSLDroid", "Stopping service");
 	}
 
+	//if the listening socket is still active, we're alive
 	public boolean isAlive(){
 		return ss.isBound();
 	}
