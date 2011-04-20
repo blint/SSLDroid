@@ -85,6 +85,7 @@ public class SSLDroidTunnelDetails extends Activity {
 					  Toast.makeText(getBaseContext(), "Required PKCS12 file parameter not setup, skipping save", 5).show();
 					  return;
 				  }
+				saveState();
 				setResult(RESULT_OK);
 				finish();
 			}
@@ -164,7 +165,7 @@ public class SSLDroidTunnelDetails extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		saveState();
+		//saveState();
 	}
 
 	@Override
