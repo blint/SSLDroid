@@ -14,4 +14,6 @@
     <string name="start_service">Start service</string>
     <string name="no_tunnels">No tunnels configured yet</string>
     <string name="menu_delete">Delete tunnel</string>
+    <string name="pkcsfile_pick">Pick a PKCS12 file from SD card</string>
+    <string name="alert_sdcard_absent">No SD card present, please insert one to continue</string>
 </resources>

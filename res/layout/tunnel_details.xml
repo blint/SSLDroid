@@ -10,7 +10,7 @@
 				android:paddingRight="10dip" android:gravity="right|center_vertical"
 				android:textAppearance="?android:attr/textAppearanceMedium" />
 
-			<EditText android:id="@+id/name" android:hint="Internal Webserver"
+			<EditText android:id="@+id/name" android:hint="Company mail server"
 				android:layout_width="fill_parent" android:layout_height="wrap_content"
 				android:singleLine="true" android:layout_weight="1" />
 		</TableRow>
