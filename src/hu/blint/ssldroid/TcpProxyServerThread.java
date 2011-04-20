@@ -186,11 +186,19 @@ public class TcpProxyServerThread extends Thread {
 	}
 	
 	public void run() {
-		while (true) {					
+		while (true) {			
 			try {
+				
+				Thread fromBrowserToServer = null;
+				Thread fromServerToBrowser = null;
+				
 				if (isInterrupted()){
 					Log.d("SSLDroid", "Interrupted server thread, closing sockets...");
 					ss.close();
+					if (fromBrowserToServer != null)
+						fromBrowserToServer.wait();
+					if (fromServerToBrowser != null)
+						fromServerToBrowser.wait();
 					return;
 				}
 				// accept the connection from my client
@@ -220,16 +228,16 @@ public class TcpProxyServerThread extends Thread {
 						+ tunnelHost + " ...");
 				
 				// relay the stuff thru
-				Thread fromBrowserToServer = new Relay(
+				fromBrowserToServer = new Relay(
 						sc.getInputStream(), st.getOutputStream());
-				Thread fromServerToBrowser = new Relay(
+				fromServerToBrowser = new Relay(
 						st.getInputStream(), sc.getOutputStream());
 
 				fromBrowserToServer.start();
 				fromServerToBrowser.start();
 
 			} catch (Exception ee) {
-				Log.d("SSLDroid", "Ouch: " + ee.toString());
+				Log.d("SSLDroid", "Ouch: " + ee.getMessage());
 				createNotification(ee.getMessage(), "Ouch: "+ee.toString());
 				//ttg.doLog("Ouch: " + ee.toString());
 			}
