@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, SSLDroidGui!</string>
     <string name="app_name">SSLDroid</string>
-    <string name="service_control">Service Control</string>
     <string name="local_port">Local port</string>
     <string name="remote_host">Remote host</string>
     <string name="remote_port">Remote port</string>
