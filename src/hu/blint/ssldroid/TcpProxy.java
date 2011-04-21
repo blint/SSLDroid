@@ -1,6 +1,7 @@
 package hu.blint.ssldroid;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 
 import android.util.Log;
@@ -27,7 +28,7 @@ public class TcpProxy {
 
 	public void serve() throws IOException {
 		try {
-			ss = new ServerSocket(listenPort);
+			ss = new ServerSocket(listenPort, 50, InetAddress.getLocalHost());
 			Log.d("SSLDroid", "Listening for connections on port "
 					+ this.listenPort + " ...");
 		} catch (Exception e) {
