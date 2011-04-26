@@ -73,7 +73,6 @@ public class SSLDroidTunnelDetails extends Activity {
 		populateFields();
 		confirmButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
-				//TODO: put local port collision check here
 				if (name.getText().length() == 0) {
 					Toast.makeText(getBaseContext(), "Required tunnel name parameter not setup, skipping save", 5).show();
 					return;
@@ -95,7 +94,20 @@ public class SSLDroidTunnelDetails extends Activity {
 					if (cPort < 1025 || cPort > 65535) {
 						Toast.makeText(getBaseContext(), "Local port parameter not in valid range (1025-65535)", 5).show();
 						return;
-					}	
+					}
+					//check if the requested port is colliding with a port already configured for another tunnel
+					SSLDroidDbAdapter dbHelper = new SSLDroidDbAdapter(getBaseContext());
+					dbHelper.open();
+					Cursor cursor = dbHelper.fetchAllLocalPorts();
+					startManagingCursor(cursor);
+					while (cursor.moveToNext()){
+						String cDbName = cursor.getString(cursor.getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_NAME));
+						int cDbPort = cursor.getInt(cursor.getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_LOCALPORT));
+						if (cPort == cDbPort){
+							Toast.makeText(getBaseContext(), "Local port already configured in tunnel '"+cDbName+"', please change...", 5).show();
+							return;
+						}		
+					}
 				}
 				//remote host validation
 				if (remotehost.getText().length() == 0){

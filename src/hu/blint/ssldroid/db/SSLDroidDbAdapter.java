@@ -68,7 +68,7 @@ public class SSLDroidDbAdapter {
 	}
 
 	/**
-	 * Return a Cursor over the list of all tunnel in the database
+	 * Return a Cursor over the list of all tunnels in the database
 	 * 
 	 * @return Cursor over all notes
 	 */
@@ -78,6 +78,16 @@ public class SSLDroidDbAdapter {
 				KEY_PKCSPASS }, null, null, null, null, null);
 	}
 
+	/**
+	 * Return a Cursor over the list of all tunnels in the database
+	 * 
+	 * @return Cursor over all notes
+	 */
+	public Cursor fetchAllLocalPorts() {
+		return database.query(DATABASE_TABLE, new String[] { KEY_NAME, 
+				KEY_LOCALPORT }, null, null, null, null, null);
+	}
+	
 	/**
 	 * Return a Cursor positioned at the defined tunnel
 	 */

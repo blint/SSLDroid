@@ -56,6 +56,7 @@ public class SSLDroid extends Service {
 		}
 	    
 		cursor.deactivate();
+		cursor.close();
 		dbHelper.close();
 		createNotification(0, true, "SSLDroid is running", "Started and serving "+tunnelcount+" tunnels");
 		Log.d(TAG, "SSLDroid Service Started");	
@@ -73,6 +74,7 @@ public class SSLDroid extends Service {
 
 	@Override
 	public void onDestroy() {
+		dbHelper.close();
 		try {
 			for (TcpProxy proxy : tp) {
 	            proxy.stop();
