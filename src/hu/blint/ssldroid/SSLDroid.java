@@ -32,6 +32,8 @@ public class SSLDroid extends Service {
 		int i;
 		for (i=0; i<tunnelcount; i++){
 			cursor.moveToPosition(i);
+			String tunnelName = cursor.getString(cursor
+					.getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_NAME));
 		    int listenPort = cursor.getInt(cursor
 					.getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_LOCALPORT));
 			int targetPort = cursor.getInt(cursor
@@ -43,9 +45,9 @@ public class SSLDroid extends Service {
 			String keyPass = cursor.getString(cursor
 					.getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_PKCSPASS));
 			try {
-				tp[i] = new TcpProxy(listenPort, targetHost, targetPort, keyFile, keyPass);
+				tp[i] = new TcpProxy(tunnelName, listenPort, targetHost, targetPort, keyFile, keyPass);
 				tp[i].serve();
-				Log.d(TAG, "Tunnel: "+listenPort+" "+targetHost+" "+targetPort+" "+keyFile);
+				Log.d(TAG, "Tunnel: "+tunnelName+" "+listenPort+" "+targetHost+" "+targetPort+" "+keyFile);
 			} catch (Exception e) {
 				Log.d(TAG, "Error:" + e.toString());
 				new AlertDialog.Builder(SSLDroid.this)

@@ -26,14 +26,17 @@ import android.util.Log;
 
 public class TcpProxyServerThread extends Thread {
 	
+	String tunnelName;
 	int listenPort;
 	String tunnelHost;
 	int tunnelPort;
 	String keyFile, keyPass;
 	Relay inRelay, outRelay;
 	ServerSocket ss = null;
+	int sessionid = 0;
 
-	public TcpProxyServerThread(ServerSocket ss, int listenPort, String tunnelHost, int tunnelPort, String keyFile, String keyPass) {
+	public TcpProxyServerThread(ServerSocket ss,String tunnelName, int listenPort, String tunnelHost, int tunnelPort, String keyFile, String keyPass) {
+		this.tunnelName = tunnelName;
 		this.listenPort = listenPort;
 		this.tunnelHost = tunnelHost;
 		this.tunnelPort = tunnelPort;
@@ -61,7 +64,7 @@ public class TcpProxyServerThread extends Thread {
 	private static SSLSocketFactory sslSocketFactory;
 
 	public final SSLSocketFactory getSocketFactory(String pkcsFile,
-			String pwd) {
+			String pwd, int sessionid) {
 		if (sslSocketFactory == null) {
 			try {
 				KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("X509");
@@ -74,20 +77,20 @@ public class TcpProxyServerThread extends Thread {
 				sslSocketFactory = (SSLSocketFactory) context.getSocketFactory();
 
 			} catch (FileNotFoundException e) {
-				Log.d("SSLDroid", "Error loading the client certificate file:"
+				Log.d("SSLDroid", tunnelName+"/"+sessionid+": Error loading the client certificate file:"
 						+ e.toString());
 			} catch (KeyManagementException e) {
-				Log.d("SSLDroid", "No SSL algorithm support: " + e.toString());
+				Log.d("SSLDroid", tunnelName+"/"+sessionid+": No SSL algorithm support: " + e.toString());
 			} catch (NoSuchAlgorithmException e) {
-				Log.d("SSLDroid", "No common SSL algorithm found: " + e.toString());
+				Log.d("SSLDroid", tunnelName+"/"+sessionid+": No common SSL algorithm found: " + e.toString());
 			} catch (KeyStoreException e) {
-				Log.d("SSLDroid", "Error setting up keystore:" + e.toString());
+				Log.d("SSLDroid", tunnelName+"/"+sessionid+": Error setting up keystore:" + e.toString());
 			} catch (java.security.cert.CertificateException e) {
-				Log.d("SSLDroid", "Error loading the client certificate:" + e.toString());
+				Log.d("SSLDroid", tunnelName+"/"+sessionid+": Error loading the client certificate:" + e.toString());
 			} catch (IOException e) {
-				Log.d("SSLDroid", "Error loading the client certificate file:" + e.toString());
+				Log.d("SSLDroid", tunnelName+"/"+sessionid+": Error loading the client certificate file:" + e.toString());
 			} catch (UnrecoverableKeyException e) {
-				Log.d("SSLDroid", "Error loading the client certificate:" + e.toString());
+				Log.d("SSLDroid", tunnelName+"/"+sessionid+": Error loading the client certificate:" + e.toString());
 			}
 		}
 		return sslSocketFactory;
@@ -96,12 +99,16 @@ public class TcpProxyServerThread extends Thread {
 	public class Relay extends Thread {
 		private InputStream in;
 		private OutputStream out;
+		private String side;
+		private int sessionid;
 		private final static int BUFSIZ = 4096;
 		private byte buf[] = new byte[BUFSIZ];
 
-		public Relay(InputStream in, OutputStream out) {
+		public Relay(InputStream in, OutputStream out, String side, int sessionid) {
 			this.in = in;
 			this.out = out;
+			this.side = side;
+			this.sessionid = sessionid;
 		}
 
 		public void run() {
@@ -111,12 +118,12 @@ public class TcpProxyServerThread extends Thread {
 				while ((n = in.read(buf)) > 0) {
 					if (Thread.interrupted()) {
 						// We've been interrupted: no more relaying
-						Log.d("SSLDroid", "Interrupted thread");
+						Log.d("SSLDroid", tunnelName+"/"+sessionid+": Interrupted "+side+" thread");
 						try {
 							in.close();
 							out.close();
 						} catch (IOException e) {
-							Log.d("SSLDroid", e.toString());
+							Log.d("SSLDroid", tunnelName+"/"+sessionid+": "+e.toString());
 						}
 						return;
 					}
@@ -129,23 +136,22 @@ public class TcpProxyServerThread extends Thread {
 					}
 				}
 			} catch (SocketException e) {
-				Log.d("SSLDroid", e.toString());
+				Log.d("SSLDroid", tunnelName+"/"+sessionid+": "+e.toString());
 			} catch (IOException e) {
-				Log.d("SSLDroid", e.toString());
+				Log.d("SSLDroid", tunnelName+"/"+sessionid+": "+e.toString());
 			} finally {
 				try {
 					in.close();
 					out.close();
 				} catch (IOException e) {
-					Log.d("SSLDroid", e.toString());
+					Log.d("SSLDroid", tunnelName+"/"+sessionid+": "+e.toString());
 				}
 			}
-			Log.d("SSLDroid", "Quitting stream proxy...");
+			Log.d("SSLDroid", tunnelName+"/"+sessionid+": Quitting "+side+"-side stream proxy...");
 		}
 	}
 	
 	public void run() {
-		//TODO: logging session ID
 		while (true) {			
 			try {
 				
@@ -153,7 +159,7 @@ public class TcpProxyServerThread extends Thread {
 				Thread fromServerToBrowser = null;
 				
 				if (isInterrupted()){
-					Log.d("SSLDroid", "Interrupted server thread, closing sockets...");
+					Log.d("SSLDroid", tunnelName+"/"+sessionid+": Interrupted server thread, closing sockets...");
 					ss.close();
 					if (fromBrowserToServer != null)
 						fromBrowserToServer.notify();
@@ -165,6 +171,7 @@ public class TcpProxyServerThread extends Thread {
 				Socket sc = null;
 				try {
 					sc = ss.accept();
+					sessionid++;
 				} catch (SocketException e){
 					Log.d("SSLDroid", "Accept failure: " + e.toString());
 				}
@@ -172,37 +179,37 @@ public class TcpProxyServerThread extends Thread {
 				Socket st = null;
 				
 				try {
-					st = (SSLSocket) getSocketFactory(this.keyFile, this.keyPass).createSocket(this.tunnelHost, this.tunnelPort);
+					st = (SSLSocket) getSocketFactory(this.keyFile, this.keyPass, this.sessionid).createSocket(this.tunnelHost, this.tunnelPort);
 					((SSLSocket) st).startHandshake();
 				} catch (IOException e){
 					
 				}
 				catch (Exception e) {
-					Log.d("SSLDroid", "SSL failure: " + e.toString());
+					Log.d("SSLDroid", tunnelName+"/"+sessionid+": SSL failure: " + e.toString());
 					sc.close();
 					return;
 				}
 
 				if (sc == null){
-					Log.d("SSLDroid", "Trying socket operation on a null socket, returning");
+					Log.d("SSLDroid", tunnelName+"/"+sessionid+": Trying socket operation on a null socket, returning");
 					return;
 				}
-				Log.d("SSLDroid", "Tunnelling port "
+				Log.d("SSLDroid", tunnelName+"/"+sessionid+": Tunnelling port "
 						+ listenPort + " to port "
 						+ tunnelPort + " on host "
 						+ tunnelHost + " ...");
 				
 				// relay the stuff through
 				fromBrowserToServer = new Relay(
-						sc.getInputStream(), st.getOutputStream());
+						sc.getInputStream(), st.getOutputStream(), "client", sessionid);
 				fromServerToBrowser = new Relay(
-						st.getInputStream(), sc.getOutputStream());
+						st.getInputStream(), sc.getOutputStream(), "server", sessionid);
 
 				fromBrowserToServer.start();
 				fromServerToBrowser.start();
 
 			} catch (Exception ee) {
-				Log.d("SSLDroid", "Ouch: " + ee.getMessage());
+				Log.d("SSLDroid", tunnelName+"/"+sessionid+": Ouch: " + ee.getMessage());
 			}
 		}
 	}

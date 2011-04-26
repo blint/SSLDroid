@@ -11,6 +11,7 @@ import android.util.Log;
  * xml.apache.org project.
  */
 public class TcpProxy {
+	String tunnelName;
 	int listenPort;
 	String tunnelHost;
 	int tunnelPort;
@@ -18,7 +19,8 @@ public class TcpProxy {
 	Thread server = null;
 	ServerSocket ss = null;
 
-	public TcpProxy(int listenPort, String targetHost, int targetPort, String keyFile, String keyPass) {
+	public TcpProxy(String tunnelName, int listenPort, String targetHost, int targetPort, String keyFile, String keyPass) {
+		this.tunnelName = tunnelName;
 		this.listenPort = listenPort;
 		this.tunnelHost = targetHost;
 		this.tunnelPort = targetPort;
@@ -35,7 +37,7 @@ public class TcpProxy {
 			Log.d("SSLDroid", "Error setting up listening socket: " + e.toString());
 			return;
 		}
-		server = new TcpProxyServerThread(this.ss, this.listenPort, this.tunnelHost, 
+		server = new TcpProxyServerThread(this.ss, this.tunnelName, this.listenPort, this.tunnelHost, 
 										  this.tunnelPort, this.keyFile, this.keyPass);
 		server.start();
 	}
