@@ -1,7 +1,17 @@
 package hu.blint.ssldroid;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -63,28 +73,79 @@ public class SSLDroidTunnelDetails extends Activity {
 		populateFields();
 		confirmButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
-				//TODO: put input validation here
 				//TODO: put local port collision check here
 				if (name.getText().length() == 0) {
-					  Toast.makeText(getBaseContext(), "Required tunnel name parameter not setup, skipping save", 5).show();
-					  return;
-				  }
-				  if (localport.getText().length() == 0) {
-					  Toast.makeText(getBaseContext(), "Required local port parameter not setup, skipping save", 5).show();
-					  return;
-				  }
-				  if (remotehost.getText().length() == 0){
-					  Toast.makeText(getBaseContext(), "Required remote host parameter not setup, skipping save", 5).show();
-					  return;
-				  }
-				  if (remoteport.getText().length() == 0){
-					  Toast.makeText(getBaseContext(), "Required remote port parameter not setup, skipping save", 5).show();
-					  return;
-				  }
-				  if (pkcsfile.getText().length() == 0){
-					  Toast.makeText(getBaseContext(), "Required PKCS12 file parameter not setup, skipping save", 5).show();
-					  return;
-				  }
+					Toast.makeText(getBaseContext(), "Required tunnel name parameter not setup, skipping save", 5).show();
+					return;
+				}
+				//local port validation
+				if (localport.getText().length() == 0) {
+					Toast.makeText(getBaseContext(), "Required local port parameter not setup, skipping save", 5).show();
+					return;
+				}
+				else {
+					//local port should be between 1025-65535 
+					int cPort = 0; 
+					try {
+						cPort = Integer.parseInt(localport.getText().toString());
+					} catch (NumberFormatException e){
+						Toast.makeText(getBaseContext(), "Local port parameter has invalid number format", 5).show();
+						return;
+					}
+					if (cPort < 1025 || cPort > 65535) {
+						Toast.makeText(getBaseContext(), "Local port parameter not in valid range (1025-65535)", 5).show();
+						return;
+					}	
+				}
+				//remote host validation
+				if (remotehost.getText().length() == 0){
+					Toast.makeText(getBaseContext(), "Required remote host parameter not setup, skipping save", 5).show();
+					return;
+				}
+				else {
+					//remote host should exist
+					try {
+						InetAddress.getByName(remotehost.getText().toString());
+					} catch (UnknownHostException e){
+						Toast.makeText(getBaseContext(), "Remote host not found, please recheck...", 5).show();
+					}
+				}
+				//remote port validation
+				if (remoteport.getText().length() == 0){
+					Toast.makeText(getBaseContext(), "Required remote port parameter not setup, skipping save", 5).show();
+					return;
+				}
+				else {
+					//remote port should be between 1025-65535
+					int cPort = 0; 
+					try {
+						cPort = Integer.parseInt(remoteport.getText().toString());
+					} catch (NumberFormatException e){
+						Toast.makeText(getBaseContext(), "Remote port parameter has invalid number format", 5).show();
+						return;
+					}
+					if (cPort < 1 || cPort > 65535) {
+						Toast.makeText(getBaseContext(), "Remote port parameter not in valid range (1-65535)", 5).show();
+						return;
+					}	
+				}
+				if (pkcsfile.getText().length() == 0){
+					Toast.makeText(getBaseContext(), "Required PKCS12 file parameter not setup, skipping save", 5).show();
+					return;
+				}
+				else {
+					// try to open pkcs12 file with password
+					String cPkcsFile = pkcsfile.getText().toString();
+					String cPkcsPass = pkcspass.getText().toString();
+					try {
+						if (checkKeys(cPkcsFile, cPkcsPass) == false){
+							return;
+						}
+					} catch (Exception e) {
+						Toast.makeText(getBaseContext(), "PKCS12 problem: "+e.getMessage(), 5).show();
+						return;
+					}
+				}
 				saveState();
 				setResult(RESULT_OK);
 				finish();
@@ -155,6 +216,42 @@ public class SSLDroidTunnelDetails extends Activity {
 					.getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_PKCSPASS)));
 		}
 	}
+	
+	public boolean checkKeys(String inCertPath, String passw) throws Exception {
+		try {
+			FileInputStream in_cert = new FileInputStream(inCertPath);
+			KeyStore myStore = KeyStore.getInstance("PKCS12");
+			myStore.load(in_cert, passw.toCharArray());
+			Enumeration<String> eAliases = myStore.aliases();
+			while (eAliases.hasMoreElements()) {
+				String strAlias = (String) eAliases.nextElement();
+				if (myStore.isKeyEntry(strAlias)) {
+					// try to retrieve the private key part from PKCS12 certificate
+					myStore.getKey(strAlias, passw.toCharArray());
+					// try to retrieve the certificate part from PKCS12 certificate
+					myStore.getCertificate(strAlias);
+				}
+			}
+
+		} catch (KeyStoreException e) {
+			Toast.makeText(getBaseContext(), "PKCS12 problem: "+e.getMessage(), 10).show();
+			return false;
+		} catch (NoSuchAlgorithmException e) {
+			Toast.makeText(getBaseContext(), "PKCS12 problem: "+e.getMessage(), 10).show();
+			return false;
+		} catch (CertificateException e) {
+			Toast.makeText(getBaseContext(), "PKCS12 problem: "+e.getMessage(), 10).show();
+			return false;
+		} catch (IOException e) {
+			Toast.makeText(getBaseContext(), "PKCS12 problem: "+e.getMessage(), 10).show();
+			return false;
+		} catch (UnrecoverableKeyException e) {
+			Toast.makeText(getBaseContext(), "PKCS12 problem: "+e.getMessage(), 10).show();
+			return false;
+		}
+		return true;
+	}
+	
 
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);

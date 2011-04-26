@@ -145,6 +145,7 @@ public class TcpProxyServerThread extends Thread {
 	}
 	
 	public void run() {
+		//TODO: logging session ID
 		while (true) {			
 			try {
 				
