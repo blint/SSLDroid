@@ -76,6 +76,7 @@ public class SSLDroid extends Service {
 
 	@Override
 	public void onDestroy() {
+		super.onDestroy();
 		dbHelper.close();
 		try {
 			for (TcpProxy proxy : tp) {

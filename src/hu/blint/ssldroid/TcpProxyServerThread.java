@@ -47,6 +47,7 @@ public class TcpProxyServerThread extends Thread {
 	
 	// Create a trust manager that does not validate certificate chains
 	// TODO: handle this somehow properly (popup if cert is untrusted?)
+	// TODO: cacert + crl should be configurable
 	TrustManager[] trustAllCerts = new TrustManager[]{
 	    new X509TrustManager() {
 	        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
@@ -154,7 +155,7 @@ public class TcpProxyServerThread extends Thread {
 	public void run() {
 		while (true) {			
 			try {
-				
+				//TODO: close client sockets if no data network is available
 				Thread fromBrowserToServer = null;
 				Thread fromServerToBrowser = null;
 				
@@ -177,7 +178,6 @@ public class TcpProxyServerThread extends Thread {
 				}
 				
 				Socket st = null;
-				
 				try {
 					st = (SSLSocket) getSocketFactory(this.keyFile, this.keyPass, this.sessionid).createSocket(this.tunnelHost, this.tunnelPort);
 					((SSLSocket) st).startHandshake();
@@ -190,7 +190,7 @@ public class TcpProxyServerThread extends Thread {
 					return;
 				}
 
-				if (sc == null){
+				if (sc == null || st == null){
 					Log.d("SSLDroid", tunnelName+"/"+sessionid+": Trying socket operation on a null socket, returning");
 					return;
 				}
@@ -208,8 +208,8 @@ public class TcpProxyServerThread extends Thread {
 				fromBrowserToServer.start();
 				fromServerToBrowser.start();
 
-			} catch (Exception ee) {
-				Log.d("SSLDroid", tunnelName+"/"+sessionid+": Ouch: " + ee.getMessage());
+			} catch (IOException ee) {
+				Log.d("SSLDroid", tunnelName+"/"+sessionid+": Ouch: " + ee.toString());
 			}
 		}
 	}
