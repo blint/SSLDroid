@@ -58,6 +58,9 @@ public class SSLDroidGui extends ListActivity {
 			Log.d("SSLDroid", "Starting service");
 			startService(new Intent(this, SSLDroid.class));
 	        return true;
+	    case R.id.readlogs:
+			startService(new Intent(this, SSLDroid.class));
+	        return true;
 		}
 		return super.onMenuItemSelected(featureId, item);
 	}
