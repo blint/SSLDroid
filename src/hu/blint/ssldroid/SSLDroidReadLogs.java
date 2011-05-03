@@ -16,26 +16,27 @@ public class SSLDroidReadLogs extends Activity{
     super.onCreate(savedInstanceState);
     setContentView(R.layout.read_logs);
     TextView logcontainer = (TextView) findViewById(R.id.logTextView);
+    logcontainer.setText("");
     Process mLogcatProc = null;
     BufferedReader reader = null;
     try
     {
             mLogcatProc = Runtime.getRuntime().exec(new String[]
-                    {"logcat", "-d", "SSLDroid:D SSLDroidGui:D *:S" });
+                    {"logcat", "-d", "-v", "time", "-b", "main", "SSLDroid:D SSLDroidGui:D *:S" });
 
             reader = new BufferedReader(new InputStreamReader(mLogcatProc.getInputStream()));
 
             String line;
-            final StringBuilder log = new StringBuilder();
+            //final StringBuilder log = new StringBuilder();
             String separator = System.getProperty("line.separator"); 
 
             while ((line = reader.readLine()) != null)
             {
-                    log.append(line);
-                    log.append(separator);
+                    logcontainer.append(line);
+                    logcontainer.append(separator);
             }
 
-            logcontainer.setText(log);
+            //logcontainer.setText(log);
     }
 
     catch (IOException e)
