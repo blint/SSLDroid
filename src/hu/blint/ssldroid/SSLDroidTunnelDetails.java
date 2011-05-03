@@ -10,6 +10,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -169,6 +170,27 @@ public class SSLDroidTunnelDetails extends Activity {
 		});
 	}
 
+	final List<String> getFileNames(File url, File baseurl)
+	{
+		List<String> names = new LinkedList<String>();
+		File[] files = url.listFiles();
+		if (files != null) {
+			for(File file : url.listFiles()) {
+				if (file.getName().startsWith("."))
+					continue;
+				if(file.isDirectory()) {
+					List<String> subdirfiles = getFileNames(file, baseurl);
+					names.addAll(subdirfiles);
+				}
+				else {
+					if (file.getName().endsWith(".p12") || file.getName().endsWith(".pfx"))
+						names.add(file.getAbsolutePath().replaceFirst(baseurl.getAbsolutePath()+"/", ""));
+				}
+			}
+		}
+		return names;
+	}
+
 	//pick a file from /sdcard, courtesy of ConnectBot
 	private void pickFileSimple() {
 		// build list of all files in sdcard root
@@ -186,15 +208,7 @@ public class SSLDroidTunnelDetails extends Activity {
 		}
 
 		List<String> names = new LinkedList<String>();
-		{
-			File[] files = sdcard.listFiles();
-			if (files != null) {
-				for(File file : sdcard.listFiles()) {
-					if(file.isDirectory()) continue;
-					names.add(file.getName());
-				}
-			}
-		}
+		names = getFileNames(sdcard, sdcard);
 		Collections.sort(names);
 
 		final String[] namesList = names.toArray(new String[] {});
