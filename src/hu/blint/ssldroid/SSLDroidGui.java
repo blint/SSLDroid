@@ -59,7 +59,7 @@ public class SSLDroidGui extends ListActivity {
 			startService(new Intent(this, SSLDroid.class));
 	        return true;
 	    case R.id.readlogs:
-			startService(new Intent(this, SSLDroid.class));
+			readLogs();
 	        return true;
 		}
 		return super.onMenuItemSelected(featureId, item);
@@ -78,6 +78,9 @@ public class SSLDroidGui extends ListActivity {
 	    case R.id.startservice:
 			Log.d("SSLDroid", "Starting service");
 			startService(new Intent(this, SSLDroid.class));
+	        return true;
+	    case R.id.readlogs:
+			readLogs();
 	        return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -101,6 +104,11 @@ public class SSLDroidGui extends ListActivity {
 		startActivityForResult(i, ACTIVITY_CREATE);
 	}
 
+	private void readLogs() {
+		Intent i = new Intent(this, SSLDroidReadLogs.class);
+		startActivity(i);
+	}
+	
 	// ListView and view (row) on which was clicked, position and
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {

@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="hu.blint.ssldroid" android:versionCode="1"
 	android:versionName="1.0">
-    <uses-permission android:name="android.permission.READ_LOGS"></uses-permission>
 	<application android:label="@string/app_name" android:icon="@drawable/icon">
 		<activity android:name="SSLDroidGui" android:label="@string/app_name">
 			<intent-filter>
@@ -11,6 +10,8 @@
 			</intent-filter>
 		</activity>
 		<activity android:name=".SSLDroidTunnelDetails"
+			android:windowSoftInputMode="stateVisible|adjustResize" />
+		<activity android:name=".SSLDroidReadLogs"
 			android:windowSoftInputMode="stateVisible|adjustResize" />
 		<service android:enabled="true" android:name="SSLDroid">
 			<intent-filter>
@@ -28,4 +29,5 @@
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+	<uses-permission android:name="android.permission.READ_LOGS" />
 </manifest>
