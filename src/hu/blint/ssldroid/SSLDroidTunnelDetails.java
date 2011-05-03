@@ -10,11 +10,11 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -170,27 +170,53 @@ public class SSLDroidTunnelDetails extends Activity {
 		});
 	}
 
-	final List<String> getFileNames(File url, File baseurl)
+	final List<File> getFileNames(File url, File baseurl)
 	{
-		List<String> names = new LinkedList<String>();
+		List<File> names = new LinkedList<File>();
 		File[] files = url.listFiles();
 		if (files != null) {
 			for(File file : url.listFiles()) {
 				if (file.getName().startsWith("."))
 					continue;
-				if(file.isDirectory()) {
-					List<String> subdirfiles = getFileNames(file, baseurl);
-					names.addAll(subdirfiles);
-				}
-				else {
-					if (file.getName().endsWith(".p12") || file.getName().endsWith(".pfx"))
-						names.add(file.getAbsolutePath().replaceFirst(baseurl.getAbsolutePath()+"/", ""));
-				}
+				names.add(file);
 			}
 		}
 		return names;
 	}
 
+	private void showFiles(final List<File> names, final File baseurl){
+		final String[] namesList = new String[names.size()]; // = names.toArray(new String[] {});
+		ListIterator<File> filelist = names.listIterator();
+		int i = 0;
+		while (filelist.hasNext()){
+			File file = filelist.next();
+			if (file.isDirectory())
+				namesList[i] = file.getAbsolutePath().replaceFirst(baseurl+"/", "")+" (...)";
+			else
+				namesList[i] = file.getAbsolutePath().replaceFirst(baseurl+"/", "");
+			i++;
+		}
+		Log.d("SSLDroid", "Gathered file names: "+namesList.toString());
+		
+		// prompt user to select any file from the sdcard root
+		new AlertDialog.Builder(SSLDroidTunnelDetails.this)
+			.setTitle(R.string.pkcsfile_pick)
+			.setItems(namesList, new OnClickListener() {
+				public void onClick(DialogInterface arg0, int arg1) {
+					String name = namesList[arg1];
+					if (names.get(arg1).isDirectory()){
+						List<File> names_ = getFileNames(names.get(arg1), baseurl);
+						Collections.sort(names_);
+						Log.d("SSLDroid", "Array size: "+String.valueOf(names.size()));
+						if (names.size() > 0)
+							showFiles(names_, baseurl);
+					}
+					pkcsfile.setText(baseurl.getAbsolutePath()+"/"+name);
+				}
+			})
+			.setNegativeButton(android.R.string.cancel, null).create().show();
+	}
+	
 	//pick a file from /sdcard, courtesy of ConnectBot
 	private void pickFileSimple() {
 		// build list of all files in sdcard root
@@ -207,23 +233,10 @@ public class SSLDroidTunnelDetails extends Activity {
 			return;
 		}
 
-		List<String> names = new LinkedList<String>();
+		List<File> names = new LinkedList<File>();
 		names = getFileNames(sdcard, sdcard);
 		Collections.sort(names);
-
-		final String[] namesList = names.toArray(new String[] {});
-		Log.d("SSLDroid", "Gathered file names: "+names.toString());
-
-		// prompt user to select any file from the sdcard root
-		new AlertDialog.Builder(SSLDroidTunnelDetails.this)
-			.setTitle(R.string.pkcsfile_pick)
-			.setItems(namesList, new OnClickListener() {
-				public void onClick(DialogInterface arg0, int arg1) {
-					String name = namesList[arg1];
-					pkcsfile.setText(sdcard+"/"+name);
-				}
-			})
-			.setNegativeButton(android.R.string.cancel, null).create().show();
+		showFiles(names, sdcard);
 	}	
 
 	private void populateFields() {
