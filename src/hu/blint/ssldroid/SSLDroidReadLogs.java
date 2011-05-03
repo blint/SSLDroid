@@ -16,24 +16,6 @@ public class SSLDroidReadLogs extends Activity{
     super.onCreate(savedInstanceState);
     setContentView(R.layout.read_logs);
     TextView logcontainer = (TextView) findViewById(R.id.logTextView);
-/*	try {
-		int[] tags = new int[1];
-		tags[0] = 0;
-		Collection<EventLog.Event> output = new HashSet<EventLog.Event>();
-		EventLog eventlog = new EventLog();
-	    eventlog.readEvents(tags, output);
-	    //Log.i("test",Integer.toString(desc.mTag));
-	    logcontainer.setText("wtf");
-	    Iterator<EventLog.Event> logs = output.iterator();
-	    while (logs.hasNext()){
-	    	Log.d("SSLDroid", "Entry");
-	    	EventLog.Event entry = logs.next();
-	    	logcontainer.append(entry.getData().toString());
-	    }
-	} catch (IOException e) {
-		e.printStackTrace();
-	} */
-    
     Process mLogcatProc = null;
     BufferedReader reader = null;
     try
