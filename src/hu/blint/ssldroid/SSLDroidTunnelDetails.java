@@ -78,12 +78,12 @@ public class SSLDroidTunnelDetails extends Activity {
 		confirmButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
 				if (name.getText().length() == 0) {
-					Toast.makeText(getBaseContext(), "Required tunnel name parameter not setup, skipping save", 5).show();
+					Toast.makeText(getBaseContext(), "Required tunnel name parameter not setup, skipping save", Toast.LENGTH_LONG).show();
 					return;
 				}
 				//local port validation
 				if (localport.getText().length() == 0) {
-					Toast.makeText(getBaseContext(), "Required local port parameter not setup, skipping save", 5).show();
+					Toast.makeText(getBaseContext(), "Required local port parameter not setup, skipping save", Toast.LENGTH_LONG).show();
 					return;
 				}
 				else {
@@ -92,11 +92,11 @@ public class SSLDroidTunnelDetails extends Activity {
 					try {
 						cPort = Integer.parseInt(localport.getText().toString());
 					} catch (NumberFormatException e){
-						Toast.makeText(getBaseContext(), "Local port parameter has invalid number format", 5).show();
+						Toast.makeText(getBaseContext(), "Local port parameter has invalid number format", Toast.LENGTH_LONG).show();
 						return;
 					}
 					if (cPort < 1025 || cPort > 65535) {
-						Toast.makeText(getBaseContext(), "Local port parameter not in valid range (1025-65535)", 5).show();
+						Toast.makeText(getBaseContext(), "Local port parameter not in valid range (1025-65535)", Toast.LENGTH_LONG).show();
 						return;
 					}
 					//check if the requested port is colliding with a port already configured for another tunnel
@@ -108,14 +108,14 @@ public class SSLDroidTunnelDetails extends Activity {
 						String cDbName = cursor.getString(cursor.getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_NAME));
 						int cDbPort = cursor.getInt(cursor.getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_LOCALPORT));
 						if (cPort == cDbPort){
-							Toast.makeText(getBaseContext(), "Local port already configured in tunnel '"+cDbName+"', please change...", 5).show();
+							Toast.makeText(getBaseContext(), "Local port already configured in tunnel '"+cDbName+"', please change...", Toast.LENGTH_LONG).show();
 							return;
 						}		
 					}
 				}
 				//remote host validation
 				if (remotehost.getText().length() == 0){
-					Toast.makeText(getBaseContext(), "Required remote host parameter not setup, skipping save", 5).show();
+					Toast.makeText(getBaseContext(), "Required remote host parameter not setup, skipping save", Toast.LENGTH_LONG).show();
 					return;
 				}
 				else {
@@ -123,12 +123,12 @@ public class SSLDroidTunnelDetails extends Activity {
 					try {
 						InetAddress.getByName(remotehost.getText().toString());
 					} catch (UnknownHostException e){
-						Toast.makeText(getBaseContext(), "Remote host not found, please recheck...", 5).show();
+						Toast.makeText(getBaseContext(), "Remote host not found, please recheck...", Toast.LENGTH_LONG).show();
 					}
 				}
 				//remote port validation
 				if (remoteport.getText().length() == 0){
-					Toast.makeText(getBaseContext(), "Required remote port parameter not setup, skipping save", 5).show();
+					Toast.makeText(getBaseContext(), "Required remote port parameter not setup, skipping save", Toast.LENGTH_LONG).show();
 					return;
 				}
 				else {
@@ -137,16 +137,16 @@ public class SSLDroidTunnelDetails extends Activity {
 					try {
 						cPort = Integer.parseInt(remoteport.getText().toString());
 					} catch (NumberFormatException e){
-						Toast.makeText(getBaseContext(), "Remote port parameter has invalid number format", 5).show();
+						Toast.makeText(getBaseContext(), "Remote port parameter has invalid number format", Toast.LENGTH_LONG).show();
 						return;
 					}
 					if (cPort < 1 || cPort > 65535) {
-						Toast.makeText(getBaseContext(), "Remote port parameter not in valid range (1-65535)", 5).show();
+						Toast.makeText(getBaseContext(), "Remote port parameter not in valid range (1-65535)", Toast.LENGTH_LONG).show();
 						return;
 					}	
 				}
 				if (pkcsfile.getText().length() == 0){
-					Toast.makeText(getBaseContext(), "Required PKCS12 file parameter not setup, skipping save", 5).show();
+					Toast.makeText(getBaseContext(), "Required PKCS12 file parameter not setup, skipping save", Toast.LENGTH_LONG).show();
 					return;
 				}
 				else {
@@ -158,7 +158,7 @@ public class SSLDroidTunnelDetails extends Activity {
 							return;
 						}
 					} catch (Exception e) {
-						Toast.makeText(getBaseContext(), "PKCS12 problem: "+e.getMessage(), 5).show();
+						Toast.makeText(getBaseContext(), "PKCS12 problem: "+e.getMessage(), Toast.LENGTH_LONG).show();
 						return;
 					}
 				}
@@ -172,9 +172,9 @@ public class SSLDroidTunnelDetails extends Activity {
 
 	final List<File> getFileNames(File url, File baseurl)
 	{
-		List<File> names = new LinkedList<File>();
+		final List<File> names = new LinkedList<File>();
 		File[] files = url.listFiles();
-		if (files != null) {
+		if (files != null && files.length > 0) {
 			for(File file : url.listFiles()) {
 				if (file.getName().startsWith("."))
 					continue;
@@ -196,22 +196,47 @@ public class SSLDroidTunnelDetails extends Activity {
 				namesList[i] = file.getAbsolutePath().replaceFirst(baseurl+"/", "");
 			i++;
 		}
-		Log.d("SSLDroid", "Gathered file names: "+namesList.toString());
+		//Log.d("SSLDroid", "Gathered file names: "+namesList.toString());
 		
 		// prompt user to select any file from the sdcard root
 		new AlertDialog.Builder(SSLDroidTunnelDetails.this)
 			.setTitle(R.string.pkcsfile_pick)
 			.setItems(namesList, new OnClickListener() {
 				public void onClick(DialogInterface arg0, int arg1) {
-					String name = namesList[arg1];
-					if (names.get(arg1).isDirectory()){
-						List<File> names_ = getFileNames(names.get(arg1), baseurl);
+					File name = names.get(arg1);
+					if (name.isDirectory()){
+						Log.d("SSLDroid", "Clicked: '"+namesList[arg1]+"'; Filename: '"+name+"';");
+						List<File> names_ = getFileNames(name, baseurl);
 						Collections.sort(names_);
-						Log.d("SSLDroid", "Array size: "+String.valueOf(names.size()));
-						if (names.size() > 0)
+						Log.d("SSLDroid", "Array: "+String.valueOf(names_.size()));
+						if (names_.size() > 0) {
 							showFiles(names_, baseurl);
+						}
+						else
+							Toast.makeText(getBaseContext(), "Empty directory", Toast.LENGTH_LONG).show();
 					}
-					pkcsfile.setText(baseurl.getAbsolutePath()+"/"+name);
+					if (name.isFile()) {
+						pkcsfile.setText(name.getAbsolutePath());
+						pkcspass.requestFocus();	
+					}					
+				}
+			})
+			//create a Back button (shouldn't go above base URL)
+			.setNeutralButton(R.string.back, new OnClickListener() {
+				public void onClick(DialogInterface arg0, int arg1) {
+					if (names.size() == 0)
+						return;
+					File name = names.get(0);
+					if (!name.getParentFile().equals(baseurl)) {
+						List<File> names_ = getFileNames(name.getParentFile().getParentFile(), baseurl);
+						Collections.sort(names_);
+						Log.d("SSLDroid", "Array: "+String.valueOf(names_.size()));
+						if (names_.size() > 0) {
+							showFiles(names_, baseurl);
+						}
+						else
+							return;						
+					}
 				}
 			})
 			.setNegativeButton(android.R.string.cancel, null).create().show();
@@ -276,19 +301,19 @@ public class SSLDroidTunnelDetails extends Activity {
 			}
 
 		} catch (KeyStoreException e) {
-			Toast.makeText(getBaseContext(), "PKCS12 problem: "+e.getMessage(), 10).show();
+			Toast.makeText(getBaseContext(), "PKCS12 problem: "+e.getMessage(), Toast.LENGTH_LONG).show();
 			return false;
 		} catch (NoSuchAlgorithmException e) {
-			Toast.makeText(getBaseContext(), "PKCS12 problem: "+e.getMessage(), 10).show();
+			Toast.makeText(getBaseContext(), "PKCS12 problem: "+e.getMessage(), Toast.LENGTH_LONG).show();
 			return false;
 		} catch (CertificateException e) {
-			Toast.makeText(getBaseContext(), "PKCS12 problem: "+e.getMessage(), 10).show();
+			Toast.makeText(getBaseContext(), "PKCS12 problem: "+e.getMessage(), Toast.LENGTH_LONG).show();
 			return false;
 		} catch (IOException e) {
-			Toast.makeText(getBaseContext(), "PKCS12 problem: "+e.getMessage(), 10).show();
+			Toast.makeText(getBaseContext(), "PKCS12 problem: "+e.getMessage(), Toast.LENGTH_LONG).show();
 			return false;
 		} catch (UnrecoverableKeyException e) {
-			Toast.makeText(getBaseContext(), "PKCS12 problem: "+e.getMessage(), 10).show();
+			Toast.makeText(getBaseContext(), "PKCS12 problem: "+e.getMessage(), Toast.LENGTH_LONG).show();
 			return false;
 		}
 		return true;

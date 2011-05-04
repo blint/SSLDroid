@@ -18,4 +18,5 @@
     <string name="alert_sdcard_absent">No SD card present, please insert one to continue</string>
     <string name="menu_readlogs">Read logs</string>
     <string name="reading_logs">Reading log messages...</string>
+    <string name="back">Back</string>
 </resources>
