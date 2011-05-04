@@ -11,8 +11,7 @@
 		</activity>
 		<activity android:name=".SSLDroidTunnelDetails"
 			android:windowSoftInputMode="stateVisible|adjustResize" />
-		<activity android:name=".SSLDroidReadLogs"
-			android:windowSoftInputMode="stateVisible|adjustResize" />
+		<activity android:name=".SSLDroidReadLogs" />
 		<service android:enabled="true" android:name="SSLDroid">
 			<intent-filter>
 				<action android:name="hu.blint.ssldroid.SSLDroid" />

@@ -22,7 +22,7 @@ public class SSLDroidReadLogs extends Activity{
     try
     {
             mLogcatProc = Runtime.getRuntime().exec(new String[]
-                    {"logcat", "-d", "-v", "time", "-b", "main", "AndroidRuntime:E SSLDroid:D SSLDroidGui:D *:S" });
+                    {"logcat", "-d", "-v", "time", "-b", "main", "SSLDroid:D SSLDroidGui:D *:S" });
 
             reader = new BufferedReader(new InputStreamReader(mLogcatProc.getInputStream()));
 
@@ -56,8 +56,7 @@ public class SSLDroidReadLogs extends Activity{
                         Log.d("SSLDroid", "Logcat problem: "+e.toString());
                     }
 
-    }
-    
+    } 
   }
   
 }
