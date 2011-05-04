@@ -15,7 +15,7 @@ public class SSLDroidReadLogs extends Activity{
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-	    MenuItem refresh = menu.add("Refresh");
+	    MenuItem refresh = menu.add(R.string.refresh);
 	    refresh.setIcon(android.R.drawable.ic_menu_rotate);
 	    return true;
 	}
