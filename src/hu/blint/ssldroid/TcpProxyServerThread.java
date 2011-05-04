@@ -155,7 +155,6 @@ public class TcpProxyServerThread extends Thread {
 	public void run() {
 		while (true) {			
 			try {
-				//TODO: close client sockets if no data network is available
 				Thread fromBrowserToServer = null;
 				Thread fromServerToBrowser = null;
 				

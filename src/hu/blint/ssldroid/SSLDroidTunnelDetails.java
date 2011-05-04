@@ -18,10 +18,12 @@ import java.util.ListIterator;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -66,7 +68,6 @@ public class SSLDroidTunnelDetails extends Activity {
             }
 		});
 
-		
 		rowId = null;
 		Bundle extras = getIntent().getExtras();
 		rowId = (bundle == null) ? null : (Long) bundle
@@ -119,12 +120,16 @@ public class SSLDroidTunnelDetails extends Activity {
 					return;
 				}
 				else {
-					//remote host should exist
-					try {
-						InetAddress.getByName(remotehost.getText().toString());
-					} catch (UnknownHostException e){
-						Toast.makeText(getBaseContext(), "Remote host not found, please recheck...", Toast.LENGTH_LONG).show();
-					}
+				    	//if we have interwebs access, the remote host should exist
+				    	ConnectivityManager conMgr =  (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+
+				    	if ( conMgr.getActiveNetworkInfo() != null || conMgr.getActiveNetworkInfo().isAvailable()) {
+				    	    try {
+				    		InetAddress.getByName(remotehost.getText().toString());
+				    	    } catch (UnknownHostException e){
+				    		Toast.makeText(getBaseContext(), "Remote host not found, please recheck...", Toast.LENGTH_LONG).show();
+				    	    }
+				    	}
 				}
 				//remote port validation
 				if (remoteport.getText().length() == 0){
