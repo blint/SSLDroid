@@ -205,10 +205,8 @@ public class SSLDroidTunnelDetails extends Activity {
 				public void onClick(DialogInterface arg0, int arg1) {
 					File name = names.get(arg1);
 					if (name.isDirectory()){
-						Log.d("SSLDroid", "Clicked: '"+namesList[arg1]+"'; Filename: '"+name+"';");
 						List<File> names_ = getFileNames(name, baseurl);
 						Collections.sort(names_);
-						Log.d("SSLDroid", "Array: "+String.valueOf(names_.size()));
 						if (names_.size() > 0) {
 							showFiles(names_, baseurl);
 						}
@@ -230,7 +228,6 @@ public class SSLDroidTunnelDetails extends Activity {
 					if (!name.getParentFile().equals(baseurl)) {
 						List<File> names_ = getFileNames(name.getParentFile().getParentFile(), baseurl);
 						Collections.sort(names_);
-						Log.d("SSLDroid", "Array: "+String.valueOf(names_.size()));
 						if (names_.size() > 0) {
 							showFiles(names_, baseurl);
 						}
