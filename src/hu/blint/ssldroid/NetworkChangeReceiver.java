@@ -13,13 +13,13 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService( Context.CONNECTIVITY_SERVICE );
         NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
+        Log.d("SSLDroid", activeNetInfo.toString());
         if ( activeNetInfo == null ) {
             Intent i = new Intent();
             i.setAction("hu.blint.ssldroid.SSLDroid");
             context.stopService(i);
             return;
         }
-        Log.d("SSLDroid", activeNetInfo.toString());
         if (activeNetInfo.isAvailable()) {
             Intent i = new Intent();
             i.setAction("hu.blint.ssldroid.SSLDroid");
