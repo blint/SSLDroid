@@ -108,7 +108,7 @@ public class SSLDroidTunnelDetails extends Activity {
                     while (cursor.moveToNext()) {
                         String cDbName = cursor.getString(cursor.getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_NAME));
                         int cDbPort = cursor.getInt(cursor.getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_LOCALPORT));
-                        if (cPort == cDbPort) {
+                        if (cPort == cDbPort && !cDbName.contentEquals(name.getText().toString())) {
                             Toast.makeText(getBaseContext(), "Local port already configured in tunnel '"+cDbName+"', please change...", Toast.LENGTH_LONG).show();
                             return;
                         }
