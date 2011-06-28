@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="tunnels">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="tunnel" type="tunnelType" minOccurs="0" maxOccurs="unbounded">
+                    <xs:annotation>
+                        <xs:documentation>
+                            A container to group tunnel settings.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute name="version" type="xs:NMTOKEN" use="required" fixed="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        The schema version of the tunnel setting.
+                        The current version is '1'.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+        </xs:complexType>
+        <xs:unique name="tunnel_name">
+            <xs:selector xpath="tunnel"/>
+            <xs:field xpath="@name"/>
+        </xs:unique>
+        <xs:unique name="localports">
+            <xs:selector xpath="tunnel/localport"/>
+            <xs:field xpath="."/>
+        </xs:unique>
+    </xs:element>
+
+    <xs:complexType name="tunnelType">
+        <xs:all>
+            <xs:element name="localport" minOccurs="1">
+              <xs:simpleType>
+                <xs:restriction base="xs:integer">
+                  <xs:minExclusive value="1024"/>
+                  <xs:maxInclusive value="65535"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+            <xs:element name="remotehost" type="xs:string" minOccurs="1" />
+            <xs:element name="remoteport" type="xs:unsignedShort" minOccurs="1" />
+            <xs:element name="pkcsfile" type="xs:string" minOccurs="1" />
+            <xs:element name="pkcspass" type="xs:string" minOccurs="0" />
+        </xs:all>
+        <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    The name of the tunnel.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+</xs:schema>
