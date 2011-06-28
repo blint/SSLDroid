@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tunnels version="1">
+	<tunnel name="test">
+		<localport>9443</localport>
+		<remotehost>host1.example.com</remotehost>
+		<remoteport>443</remoteport>
+		<pkcsfile>/sdcard/vpn/user.p12</pkcsfile>
+		<pkcspass></pkcspass>
+	</tunnel>
+	<tunnel name="test2">
+		<localport>9993</localport>
+		<remotehost>host2.example.com</remotehost>
+		<remoteport>993</remoteport>
+		<pkcsfile>/sdcard/vpn/user.p12</pkcsfile>
+		<pkcspass></pkcspass>
+	</tunnel>
+</tunnels>
+		
