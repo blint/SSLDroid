@@ -82,6 +82,9 @@ public class SSLDroidGui extends ListActivity {
         case R.id.readlogs:
             readLogs();
             return true;
+        //case R.id.provision:
+        //    getProvisioning();
+        //    return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -109,6 +112,11 @@ public class SSLDroidGui extends ListActivity {
         startActivity(i);
     }
 
+    private void getProvisioning() {
+        Intent i = new Intent(this, SSLDroidProvisioning.class);
+        startActivity(i);
+    }
+    
     // ListView and view (row) on which was clicked, position and
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
