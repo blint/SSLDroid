@@ -31,7 +31,7 @@ public class TcpProxy {
     public void serve() throws IOException {
         try {
             ss = new ServerSocket(listenPort, 50, InetAddress.getLocalHost());
-            Log.d("SSLDroid", "Listening for connections on port "
+            Log.d("SSLDroid", "Listening for connections on "+InetAddress.getLocalHost().getHostAddress()+":"+
                   + this.listenPort + " ...");
         } catch (Exception e) {
             Log.d("SSLDroid", "Error setting up listening socket: " + e.toString());
