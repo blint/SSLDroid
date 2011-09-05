@@ -10,6 +10,10 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+
+import java.security.cert.Certificate;
+import javax.security.cert.CertificateExpiredException;
+import javax.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -297,8 +301,14 @@ public class SSLDroidTunnelDetails extends Activity {
                 if (myStore.isKeyEntry(strAlias)) {
                     // try to retrieve the private key part from PKCS12 certificate
                     myStore.getKey(strAlias, passw.toCharArray());
-                    // try to retrieve the certificate part from PKCS12 certificate
-                    myStore.getCertificate(strAlias);
+                    Certificate mycrt = myStore.getCertificate(strAlias);
+                    X509Certificate mycert = X509Certificate.getInstance(mycrt.getEncoded());
+                    try {
+                	mycert.checkValidity();
+                    } catch (CertificateExpiredException e) {
+                        Toast.makeText(getBaseContext(), "PKCS12 problem: "+e.getMessage(), Toast.LENGTH_LONG).show();
+                        return false;                	
+                    }
                 }
             }
 
