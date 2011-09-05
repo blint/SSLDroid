@@ -181,7 +181,8 @@ public class TcpProxyServerThread extends Thread {
                     st = (SSLSocket) getSocketFactory(this.keyFile, this.keyPass, this.sessionid).createSocket(this.tunnelHost, this.tunnelPort);
                     ((SSLSocket) st).startHandshake();
                 } catch (IOException e) {
-
+                    Log.d("SSLDroid", tunnelName+"/"+sessionid+": SSL failure: " + e.toString());
+                    return;
                 }
                 catch (Exception e) {
                     Log.d("SSLDroid", tunnelName+"/"+sessionid+": SSL failure: " + e.toString());
