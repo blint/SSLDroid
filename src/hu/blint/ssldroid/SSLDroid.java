@@ -4,6 +4,7 @@ import hu.blint.ssldroid.TcpProxy;
 import android.app.*;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import hu.blint.ssldroid.db.SSLDroidDbAdapter;
@@ -71,7 +72,7 @@ public class SSLDroid extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+	return null;
     }
 
     @Override

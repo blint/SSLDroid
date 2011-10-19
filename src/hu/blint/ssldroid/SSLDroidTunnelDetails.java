@@ -83,12 +83,12 @@ public class SSLDroidTunnelDetails extends Activity {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 if (name.getText().length() == 0) {
-                    Toast.makeText(getBaseContext(), "Required tunnel name parameter not setup, skipping save", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), "Required tunnel name parameter not set up, skipping save", Toast.LENGTH_LONG).show();
                     return;
                 }
                 //local port validation
                 if (localport.getText().length() == 0) {
-                    Toast.makeText(getBaseContext(), "Required local port parameter not setup, skipping save", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), "Required local port parameter not set up, skipping save", Toast.LENGTH_LONG).show();
                     return;
                 }
                 else {
@@ -120,7 +120,7 @@ public class SSLDroidTunnelDetails extends Activity {
                 }
                 //remote host validation
                 if (remotehost.getText().length() == 0) {
-                    Toast.makeText(getBaseContext(), "Required remote host parameter not setup, skipping save", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), "Required remote host parameter not set up, skipping save", Toast.LENGTH_LONG).show();
                     return;
                 }
                 else {
@@ -137,7 +137,7 @@ public class SSLDroidTunnelDetails extends Activity {
                 }
                 //remote port validation
                 if (remoteport.getText().length() == 0) {
-                    Toast.makeText(getBaseContext(), "Required remote port parameter not setup, skipping save", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), "Required remote port parameter not set up, skipping save", Toast.LENGTH_LONG).show();
                     return;
                 }
                 else {
@@ -155,7 +155,7 @@ public class SSLDroidTunnelDetails extends Activity {
                     }
                 }
                 if (pkcsfile.getText().length() == 0) {
-                    Toast.makeText(getBaseContext(), "Required PKCS12 file parameter not setup, skipping save", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), "Required PKCS12 file parameter not set up, skipping save", Toast.LENGTH_LONG).show();
                     return;
                 }
                 else {

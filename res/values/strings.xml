@@ -11,6 +11,7 @@
     <string name="connection_name">Tunnel name</string>
     <string name="add_tunnel">Add tunnel</string>
     <string name="stop_service">Stop service</string>
+    <string name="stop_service_for_good">Stop service until started</string>
     <string name="start_service">Start service</string>
     <string name="no_tunnels">No tunnels configured yet</string>
     <string name="menu_delete">Delete tunnel</string>
@@ -18,6 +19,8 @@
     <string name="alert_sdcard_absent">No SD card present, please insert one to continue</string>
     <string name="menu_readlogs">Read logs</string>
     <string name="reading_logs">Reading log messages...</string>
+    <string name="menu_provision">Provisioning</string>
+    <string name="provision">Please enter the URL for remote XML configuration</string>
     <string name="back">Back</string>
     <string name="refresh">Refresh</string>
 </resources>

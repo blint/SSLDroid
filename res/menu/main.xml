@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu
   xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:enabled="true" android:title="@string/add_tunnel" android:id="@+id/addtunnel" android:icon="@android:drawable/ic_menu_add"></item>
-    
-    <item android:enabled="true" android:id="@+id/startservice" android:title="@string/start_service" android:icon="@android:drawable/ic_menu_manage"></item><item android:title="@string/stop_service" android:enabled="true" android:id="@+id/stopservice" android:icon="@android:drawable/ic_menu_close_clear_cancel"></item>
+    <item android:enabled="true" android:title="@string/add_tunnel" android:id="@+id/addtunnel" android:icon="@android:drawable/ic_menu_add"></item>    
+    <item android:enabled="true" android:id="@+id/startservice" android:title="@string/start_service" android:icon="@android:drawable/ic_menu_manage"></item>
+    <item android:title="@string/stop_service" android:enabled="true" android:id="@+id/stopservice" android:icon="@android:drawable/ic_menu_close_clear_cancel"></item>
+    <item android:title="@string/stop_service_for_good" android:enabled="true" android:id="@+id/stopserviceforgood" android:icon="@android:drawable/ic_menu_close_clear_cancel"></item>
     <item android:title="@string/menu_readlogs" android:id="@+id/readlogs" android:icon="@android:drawable/ic_menu_agenda" android:enabled="true"></item>
+    <!-- <item android:title="@string/menu_provision" android:id="@+id/provision" android:icon="@android:drawable/ic_menu_mapmode" android:enabled="true"></item> -->
 </menu>

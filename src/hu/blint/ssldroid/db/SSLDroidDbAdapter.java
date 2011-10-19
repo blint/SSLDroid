@@ -16,7 +16,10 @@ public class SSLDroidDbAdapter {
     public static final String KEY_REMOTEPORT = "remoteport";
     public static final String KEY_PKCSFILE = "pkcsfile";
     public static final String KEY_PKCSPASS = "pkcspass";
+    public static final String KEY_STATUS_NAME = "name";
+    public static final String KEY_STATUS_VALUE = "value";
     private static final String DATABASE_TABLE = "tunnels";
+    private static final String STATUS_TABLE = "status";
     private Context context;
     private SQLiteDatabase database;
     private SSLDroidDbHelper dbHelper;
@@ -93,6 +96,30 @@ public class SSLDroidDbAdapter {
     /**
      * Return a Cursor positioned at the defined tunnel
      */
+    public Cursor fetchStatus(String valuename) throws SQLException {
+        return database.query(STATUS_TABLE, new String[] {
+                                            KEY_STATUS_NAME, KEY_STATUS_VALUE
+                                        },
+                                        KEY_STATUS_NAME + "='" + valuename + "'", null, null, null, null);
+    }
+
+    public Cursor getStopStatus() {
+        return fetchStatus("stopped");
+    }
+
+    public boolean setStopStatus() {
+	ContentValues stopStatus = new ContentValues();
+        stopStatus.put(KEY_STATUS_NAME, "stopped");
+        stopStatus.put(KEY_STATUS_VALUE, "yes");
+        if (getStopStatus().getCount() == 0)
+            database.insert(STATUS_TABLE, null, stopStatus);
+        return true;
+    }
+    
+    public boolean delStopStatus() {
+        return database.delete(STATUS_TABLE, KEY_STATUS_NAME+"= 'stopped'", null) > 0;
+    }
+    
     public Cursor fetchTunnel(long rowId) throws SQLException {
         Cursor mCursor = database.query(true, DATABASE_TABLE, new String[] {
                                             KEY_ROWID, KEY_NAME, KEY_LOCALPORT, KEY_REMOTEHOST, KEY_REMOTEPORT,
@@ -104,7 +131,7 @@ public class SSLDroidDbAdapter {
         }
         return mCursor;
     }
-
+    
     private ContentValues createContentValues(String name, int localport, String remotehost, int remoteport,
             String pkcsfile, String pkcspass) {
         ContentValues values = new ContentValues();

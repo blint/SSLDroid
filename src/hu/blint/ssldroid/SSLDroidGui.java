@@ -54,8 +54,14 @@ public class SSLDroidGui extends ListActivity {
             Log.d("SSLDroid", "Stopping service");
             stopService(new Intent(this, SSLDroid.class));
             return true;
+        case R.id.stopserviceforgood:
+            Log.d("SSLDroid", "Stopping service until explicitly started");
+            dbHelper.setStopStatus();
+            stopService(new Intent(this, SSLDroid.class));
+            return true;
         case R.id.startservice:
             Log.d("SSLDroid", "Starting service");
+            dbHelper.delStopStatus();
             startService(new Intent(this, SSLDroid.class));
             return true;
         case R.id.readlogs:
@@ -75,8 +81,14 @@ public class SSLDroidGui extends ListActivity {
             Log.d("SSLDroid", "Stopping service");
             stopService(new Intent(this, SSLDroid.class));
             return true;
+        case R.id.stopserviceforgood:
+            Log.d("SSLDroid", "Stopping service until explicitly started");
+            dbHelper.setStopStatus();
+            stopService(new Intent(this, SSLDroid.class));
+            return true;
         case R.id.startservice:
             Log.d("SSLDroid", "Starting service");
+            dbHelper.delStopStatus();
             startService(new Intent(this, SSLDroid.class));
             return true;
         case R.id.readlogs:
@@ -124,7 +136,6 @@ public class SSLDroidGui extends ListActivity {
         Intent i = new Intent(this, SSLDroidTunnelDetails.class);
         i.putExtra(SSLDroidDbAdapter.KEY_ROWID, id);
         // Activity returns an result if called with startActivityForResult
-
         startActivityForResult(i, ACTIVITY_EDIT);
     }
 
@@ -159,4 +170,12 @@ public class SSLDroidGui extends ListActivity {
         super.onCreateContextMenu(menu, v, menuInfo);
         menu.add(0, DELETE_ID, 0, R.string.menu_delete);
     }
+    
+    @Override
+    public void onDestroy (){
+	cursor.close();
+	dbHelper.close();
+	super.onDestroy();
+    }
+    
 }
