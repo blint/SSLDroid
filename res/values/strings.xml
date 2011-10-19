@@ -11,7 +11,7 @@
     <string name="connection_name">Tunnel name</string>
     <string name="add_tunnel">Add tunnel</string>
     <string name="stop_service">Stop service</string>
-    <string name="stop_service_for_good">Stop service until started</string>
+    <string name="stop_service_for_good">Stop until explicit start</string>
     <string name="start_service">Start service</string>
     <string name="no_tunnels">No tunnels configured yet</string>
     <string name="menu_delete">Delete tunnel</string>
