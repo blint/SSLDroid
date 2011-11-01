@@ -1,0 +1,6 @@
+SSLDroid is a Java-based plain-to-SSL proxy for Android devices
+
+The main goal of SSLDroid is to provide client-side certificate based
+authentication capabilities to software on Android, most notably email
+and calendar sync
+
