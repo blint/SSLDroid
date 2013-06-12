@@ -3,7 +3,12 @@ package hu.blint.ssldroid;
 import hu.blint.ssldroid.TcpProxy;
 import android.app.*;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
+import android.os.Build;
+import android.os.Build.VERSION;
 import android.os.IBinder;
 import android.util.Log;
 import hu.blint.ssldroid.db.SSLDroidDbAdapter;
@@ -61,7 +66,19 @@ public class SSLDroid extends Service {
         cursor.close();
         dbHelper.close();
         createNotification(0, true, "SSLDroid is running", "Started and serving "+tunnelcount+" tunnels");
-        Log.d(TAG, "SSLDroid Service Started");
+        //get the version
+        int vcode = 0;
+        String vname = "";
+        PackageManager manager = this.getPackageManager();
+        try {
+	    PackageInfo pkginfo = manager.getPackageInfo(this.getPackageName(), 0);
+	    vname = pkginfo.versionName;
+	    vcode = pkginfo.versionCode;
+	} catch (NameNotFoundException e) {
+	    Log.d(TAG, "Error getting package version; error='"+e.toString()+"'");
+	}
+        //startup message
+        Log.d(TAG, "SSLDroid Service Started; version='"+vcode +"', versionname='"+vname+"'");
     }
 
     @Override
