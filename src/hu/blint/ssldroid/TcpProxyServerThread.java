@@ -161,10 +161,6 @@ public class TcpProxyServerThread extends Thread {
                 if (isInterrupted()) {
                     Log.d("SSLDroid", tunnelName+"/"+sessionid+": Interrupted server thread, closing sockets...");
                     ss.close();
-                    if (fromBrowserToServer != null)
-                        fromBrowserToServer.notify();
-                    if (fromServerToBrowser != null)
-                        fromServerToBrowser.notify();
                     return;
                 }
                 // accept the connection from my client
