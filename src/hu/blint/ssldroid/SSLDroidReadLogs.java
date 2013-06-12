@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -17,12 +18,19 @@ public class SSLDroidReadLogs extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuItem refresh = menu.add(R.string.refresh);
         refresh.setIcon(android.R.drawable.ic_menu_rotate);
+        MenuItem share = menu.add(R.string.share);
+        share.setIcon(android.R.drawable.ic_menu_share);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        refreshLogs();
+        if (item.getTitle() == getResources().getString(R.string.refresh)) 
+            refreshLogs();
+        else if ((item.getTitle() == getResources().getString(R.string.share)))
+            shareLogs();
+        else
+            return false;
         return true;
     }
 
@@ -40,7 +48,7 @@ public class SSLDroidReadLogs extends Activity {
         BufferedReader reader = null;
         try {
             mLogcatProc = Runtime.getRuntime().exec(new String[]
-                                                    {"logcat", "-d", "-v", "time", "-b", "main", "SSLDroid:D SSLDroidGui:D *:S" });
+                                                    {"logcat", "-d", "-v", "time", "-b", "main", "SSLDroid:D SSLDroidGui:D AndroidRuntime *:S" });
 
             reader = new BufferedReader(new InputStreamReader(mLogcatProc.getInputStream()));
 
@@ -61,6 +69,17 @@ public class SSLDroidReadLogs extends Activity {
                     Log.d("SSLDroid", "Logcat problem: "+e.toString());
                 }
         }
+    }
+    
+    public void shareLogs() {
+	Intent sendIntent = new Intent();
+	TextView logcontainer = (TextView) findViewById(R.id.logTextView);
+	CharSequence logdata = logcontainer.getText();
+	
+	sendIntent.setAction(Intent.ACTION_SEND);
+	sendIntent.putExtra(Intent.EXTRA_TEXT, logdata);
+	sendIntent.setType("text/plain");
+	startActivity(sendIntent);
     }
 
 }
