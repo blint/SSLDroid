@@ -124,6 +124,7 @@ public class SSLDroidGui extends ListActivity {
         startActivity(i);
     }
 
+    @SuppressWarnings("unused")
     private void getProvisioning() {
         Intent i = new Intent(this, SSLDroidProvisioning.class);
         startActivity(i);
