@@ -48,6 +48,7 @@ public class SSLDroidTunnelDetails extends Activity {
     private EditText pkcsfile;
     private EditText pkcspass;
     private Long rowId;
+    private Boolean doClone = false;
     private SSLDroidDbAdapter dbHelper;
 
     @Override
@@ -78,6 +79,7 @@ public class SSLDroidTunnelDetails extends Activity {
                 .getSerializable(SSLDroidDbAdapter.KEY_ROWID);
         if (extras != null) {
             rowId = extras.getLong(SSLDroidDbAdapter.KEY_ROWID);
+            doClone = extras.getBoolean("doClone", false);
         }
         populateFields();
         confirmButton.setOnClickListener(new View.OnClickListener() {
@@ -275,10 +277,12 @@ public class SSLDroidTunnelDetails extends Activity {
             Cursor Tunnel = dbHelper.fetchTunnel(rowId);
             startManagingCursor(Tunnel);
 
-            name.setText(Tunnel.getString(Tunnel
-                                          .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_NAME)));
-            localport.setText(Tunnel.getString(Tunnel
-                                               .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_LOCALPORT)));
+            if(!doClone){
+        	name.setText(Tunnel.getString(Tunnel
+                                              .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_NAME)));
+        	localport.setText(Tunnel.getString(Tunnel
+                                                   .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_LOCALPORT)));
+            }
             remotehost.setText(Tunnel.getString(Tunnel
                                                 .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_REMOTEHOST)));
             remoteport.setText(Tunnel.getString(Tunnel
@@ -383,7 +387,7 @@ public class SSLDroidTunnelDetails extends Activity {
             return;
         }
 
-        if (rowId == null) {
+        if (rowId == null || doClone) {
             long id = dbHelper.createTunnel(sName, sLocalport, sRemotehost,
                                             sRemoteport, sPkcsfile, sPkcspass);
             if (id > 0) {

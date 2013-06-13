@@ -21,6 +21,7 @@ public class SSLDroidGui extends ListActivity {
     private static final int ACTIVITY_CREATE = 0;
     private static final int ACTIVITY_EDIT = 1;
     private static final int DELETE_ID = Menu.FIRST + 1;
+    private static final int CLONE_ID = Menu.FIRST + 2;
     private Cursor cursor;
 
     /** Called when the activity is first created. */
@@ -103,11 +104,15 @@ public class SSLDroidGui extends ListActivity {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+                .getMenuInfo();
+	switch (item.getItemId()) {
         case DELETE_ID:
-            AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
-                                          .getMenuInfo();
             dbHelper.deleteTunnel(info.id);
+            fillData();
+            return true;
+        case CLONE_ID:
+            cloneTunnel(info.id);
             fillData();
             return true;
         }
@@ -119,6 +124,13 @@ public class SSLDroidGui extends ListActivity {
         startActivityForResult(i, ACTIVITY_CREATE);
     }
 
+    public void cloneTunnel(long id) {
+        Intent i = new Intent(this, SSLDroidTunnelDetails.class);
+        i.putExtra(SSLDroidDbAdapter.KEY_ROWID, id);
+        i.putExtra("doClone", true);
+        startActivityForResult(i, ACTIVITY_EDIT);
+    }
+    
     private void readLogs() {
         Intent i = new Intent(this, SSLDroidReadLogs.class);
         startActivity(i);
@@ -170,6 +182,7 @@ public class SSLDroidGui extends ListActivity {
                                     ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         menu.add(0, DELETE_ID, 0, R.string.menu_delete);
+        menu.add(0, CLONE_ID, 0, R.string.menu_clone);
     }
     
     @Override
