@@ -7,8 +7,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
-import android.os.Build;
-import android.os.Build.VERSION;
 import android.os.IBinder;
 import android.util.Log;
 import hu.blint.ssldroid.db.SSLDroidDbAdapter;
