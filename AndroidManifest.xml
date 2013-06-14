@@ -19,7 +19,7 @@
 			android:windowSoftInputMode="stateVisible|adjustResize" />
 		<activity android:name=".SSLDroidReadLogs" />
 		<activity android:name=".SSLDroidProvisioning" />
-		<service android:enabled="true" android:name="SSLDroid" android:permission="android.permission.CHANGE_NETWORK_STATE">
+		<service android:enabled="true" android:name="SSLDroid" android:permission="android.permission.INTERNET">
 			<intent-filter>
 				<action android:name="hu.blint.ssldroid.SSLDroid" />
 			</intent-filter>
