@@ -34,6 +34,7 @@ public class TcpProxyServerThread extends Thread {
     Relay inRelay, outRelay;
     ServerSocket ss = null;
     int sessionid = 0;
+    private SSLSocketFactory sslSocketFactory;
 
     public TcpProxyServerThread(ServerSocket ss,String tunnelName, int listenPort, String tunnelHost, int tunnelPort, String keyFile, String keyPass) {
         this.tunnelName = tunnelName;
@@ -61,8 +62,6 @@ public class TcpProxyServerThread extends Thread {
         }
     }
     };
-
-    private static SSLSocketFactory sslSocketFactory;
 
     public final SSLSocketFactory getSocketFactory(String pkcsFile,
             String pwd, int sessionid) {
