@@ -3,8 +3,6 @@ package hu.blint.ssldroid;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -96,61 +94,6 @@ public class TcpProxyServerThread extends Thread {
         return sslSocketFactory;
     }
 
-    public class Relay extends Thread {
-        private InputStream in;
-        private OutputStream out;
-        private String side;
-        private int sessionid;
-        private final static int BUFSIZ = 4096;
-        private byte buf[] = new byte[BUFSIZ];
-
-        public Relay(InputStream in, OutputStream out, String side, int sessionid) {
-            this.in = in;
-            this.out = out;
-            this.side = side;
-            this.sessionid = sessionid;
-        }
-
-        public void run() {
-            int n = 0;
-
-            try {
-                while ((n = in.read(buf)) > 0) {
-                    if (Thread.interrupted()) {
-                        // We've been interrupted: no more relaying
-                        Log.d("SSLDroid", tunnelName+"/"+sessionid+": Interrupted "+side+" thread");
-                        try {
-                            in.close();
-                            out.close();
-                        } catch (IOException e) {
-                            Log.d("SSLDroid", tunnelName+"/"+sessionid+": "+e.toString());
-                        }
-                        return;
-                    }
-                    out.write(buf, 0, n);
-                    out.flush();
-
-                    for (int i = 0; i < n; i++) {
-                        if (buf[i] == 7)
-                            buf[i] = '#';
-                    }
-                }
-            } catch (SocketException e) {
-                Log.d("SSLDroid", tunnelName+"/"+sessionid+": "+e.toString());
-            } catch (IOException e) {
-                Log.d("SSLDroid", tunnelName+"/"+sessionid+": "+e.toString());
-            } finally {
-                try {
-                    in.close();
-                    out.close();
-                } catch (IOException e) {
-                    Log.d("SSLDroid", tunnelName+"/"+sessionid+": "+e.toString());
-                }
-            }
-            Log.d("SSLDroid", tunnelName+"/"+sessionid+": Quitting "+side+"-side stream proxy...");
-        }
-    }
-
     public void run() {
         while (true) {
             try {
@@ -196,9 +139,9 @@ public class TcpProxyServerThread extends Thread {
 
                 // relay the stuff through
                 fromBrowserToServer = new Relay(
-                    sc.getInputStream(), st.getOutputStream(), "client", sessionid);
+                    this, sc.getInputStream(), st.getOutputStream(), "client", sessionid);
                 fromServerToBrowser = new Relay(
-                    st.getInputStream(), sc.getOutputStream(), "server", sessionid);
+                    this, st.getInputStream(), sc.getOutputStream(), "server", sessionid);
 
                 fromBrowserToServer.start();
                 fromServerToBrowser.start();
