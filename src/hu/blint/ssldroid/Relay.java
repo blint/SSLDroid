@@ -55,8 +55,6 @@ public class Relay extends Thread {
             Log.d("SSLDroid", this.tcpProxyServerThread.tunnelName+"/"+sessionid+": "+e.toString());
         } catch (IOException e) {
             Log.d("SSLDroid", this.tcpProxyServerThread.tunnelName+"/"+sessionid+": "+e.toString());
-        } catch (InterruptedException e) {
-            Log.d("SSLDroid", this.tcpProxyServerThread.tunnelName+"/"+sessionid+": "+e.toString());
         } finally {
             try {
                 in.close();
