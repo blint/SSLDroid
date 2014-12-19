@@ -124,7 +124,10 @@ public class TcpProxyServerThread extends Thread {
                 }
                 catch (Exception e) {
                     Log.d("SSLDroid", tunnelName+"/"+sessionid+": SSL failure: " + e.toString());
-                    sc.close();
+                    if (sc != null)
+                      {
+                        sc.close();
+                      }
                     return;
                 }
 
