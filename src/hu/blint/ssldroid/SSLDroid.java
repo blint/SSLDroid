@@ -20,6 +20,9 @@ public class SSLDroid extends Service {
     @Override
     public void onCreate() {
 
+	//initialize secure random Generation
+	PRNGFixes.apply();
+	
         dbHelper = new SSLDroidDbAdapter(this);
         dbHelper.open();
         Cursor cursor = dbHelper.fetchAllTunnels();
