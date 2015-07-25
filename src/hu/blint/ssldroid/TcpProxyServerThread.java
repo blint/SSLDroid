@@ -3,6 +3,7 @@ package hu.blint.ssldroid;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -34,14 +35,13 @@ public class TcpProxyServerThread extends Thread {
     int sessionid = 0;
     private SSLSocketFactory sslSocketFactory;
 
-    public TcpProxyServerThread(ServerSocket ss,String tunnelName, int listenPort, String tunnelHost, int tunnelPort, String keyFile, String keyPass) {
+    public TcpProxyServerThread(String tunnelName, int listenPort, String tunnelHost, int tunnelPort, String keyFile, String keyPass) {
         this.tunnelName = tunnelName;
         this.listenPort = listenPort;
         this.tunnelHost = tunnelHost;
         this.tunnelPort = tunnelPort;
         this.keyFile = keyFile;
         this.keyPass = keyPass;
-        this.ss = ss;
     }
 
     // Create a trust manager that does not validate certificate chains
@@ -65,15 +65,19 @@ public class TcpProxyServerThread extends Thread {
             String pwd, int sessionid) {
         if (sslSocketFactory == null) {
             try {
-                KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("X509");
-                KeyStore keyStore = KeyStore.getInstance("PKCS12");
-                keyStore.load(new FileInputStream(pkcsFile), pwd.toCharArray());
-                keyManagerFactory.init(keyStore, pwd.toCharArray());
+                KeyManagerFactory keyManagerFactory;
+                if (pkcsFile != null && !pkcsFile.isEmpty()) {
+                    keyManagerFactory = KeyManagerFactory.getInstance("X509");
+                    KeyStore keyStore = KeyStore.getInstance("PKCS12");
+                    keyStore.load(new FileInputStream(pkcsFile), pwd.toCharArray());
+                    keyManagerFactory.init(keyStore, pwd.toCharArray());
+                } else {
+                    keyManagerFactory = null;
+                }
                 SSLContext context = SSLContext.getInstance("TLS");
-                context.init(keyManagerFactory.getKeyManagers(), trustAllCerts,
+                context.init(keyManagerFactory == null ? null : keyManagerFactory.getKeyManagers(), trustAllCerts,
                              new SecureRandom());
-                sslSocketFactory = (SSLSocketFactory) context.getSocketFactory();
-
+                sslSocketFactory = context.getSocketFactory();
             } catch (FileNotFoundException e) {
                 Log.d("SSLDroid", tunnelName+"/"+sessionid+": Error loading the client certificate file:"
                       + e.toString());
@@ -95,6 +99,14 @@ public class TcpProxyServerThread extends Thread {
     }
 
     public void run() {
+        try {
+            ss = new ServerSocket(listenPort, 50, InetAddress.getLocalHost());
+            Log.d("SSLDroid", "Listening for connections on "+InetAddress.getLocalHost().getHostAddress()+":"+
+                  + this.listenPort + " ...");
+        } catch (Exception e) {
+            Log.d("SSLDroid", "Error setting up listening socket: " + e.toString());
+            return;
+        }
         while (true) {
             try {
                 Thread fromBrowserToServer = null;
@@ -116,7 +128,9 @@ public class TcpProxyServerThread extends Thread {
 
                 Socket st = null;
                 try {
-                    st = (SSLSocket) getSocketFactory(this.keyFile, this.keyPass, this.sessionid).createSocket(this.tunnelHost, this.tunnelPort);
+                    final SSLSocketFactory sf = getSocketFactory(this.keyFile, this.keyPass, this.sessionid);
+                    st = (SSLSocket) sf.createSocket(this.tunnelHost, this.tunnelPort);
+                    setSNIHost(sf, (SSLSocket) st, this.tunnelHost);
                     ((SSLSocket) st).startHandshake();
                 } catch (IOException e) {
                     Log.d("SSLDroid", tunnelName+"/"+sessionid+": SSL failure: " + e.toString());
@@ -151,6 +165,18 @@ public class TcpProxyServerThread extends Thread {
 
             } catch (IOException ee) {
                 Log.d("SSLDroid", tunnelName+"/"+sessionid+": Ouch: " + ee.toString());
+            }
+        }
+    }
+
+    private void setSNIHost(final SSLSocketFactory factory, final SSLSocket socket, final String hostname) {
+        if (factory instanceof android.net.SSLCertificateSocketFactory && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            ((android.net.SSLCertificateSocketFactory)factory).setHostname(socket, hostname);
+        } else {
+            try {
+                socket.getClass().getMethod("setHostname", String.class).invoke(socket, hostname);
+            } catch (Throwable e) {
+                // ignore any error, we just can't set the hostname...
             }
         }
     }

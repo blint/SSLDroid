@@ -125,18 +125,6 @@ public class SSLDroidTunnelDetails extends Activity {
                     Toast.makeText(getBaseContext(), "Required remote host parameter not set up, skipping save", Toast.LENGTH_LONG).show();
                     return;
                 }
-                else {
-                    //if we have interwebs access, the remote host should exist
-                    ConnectivityManager conMgr =  (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-
-                    if ( conMgr.getActiveNetworkInfo() != null || conMgr.getActiveNetworkInfo().isAvailable()) {
-                        try {
-                            InetAddress.getByName(remotehost.getText().toString());
-                        } catch (UnknownHostException e) {
-                            Toast.makeText(getBaseContext(), "Remote host not found, please recheck...", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                }
                 //remote port validation
                 if (remoteport.getText().length() == 0) {
                     Toast.makeText(getBaseContext(), "Required remote port parameter not set up, skipping save", Toast.LENGTH_LONG).show();
@@ -156,11 +144,7 @@ public class SSLDroidTunnelDetails extends Activity {
                         return;
                     }
                 }
-                if (pkcsfile.getText().length() == 0) {
-                    Toast.makeText(getBaseContext(), "Required PKCS12 file parameter not set up, skipping save", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                else {
+                if (pkcsfile.getText().length() != 0) {
                     // try to open pkcs12 file with password
                     String cPkcsFile = pkcsfile.getText().toString();
                     String cPkcsPass = pkcspass.getText().toString();
@@ -381,9 +365,6 @@ public class SSLDroidTunnelDetails extends Activity {
             return;
         }
         if (sRemoteport == 0) {
-            return;
-        }
-        if (sPkcsfile.length() == 0) {
             return;
         }
 
