@@ -3,6 +3,7 @@ package hu.blint.ssldroid;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -34,14 +35,13 @@ public class TcpProxyServerThread extends Thread {
     int sessionid = 0;
     private SSLSocketFactory sslSocketFactory;
 
-    public TcpProxyServerThread(ServerSocket ss,String tunnelName, int listenPort, String tunnelHost, int tunnelPort, String keyFile, String keyPass) {
+    public TcpProxyServerThread(String tunnelName, int listenPort, String tunnelHost, int tunnelPort, String keyFile, String keyPass) {
         this.tunnelName = tunnelName;
         this.listenPort = listenPort;
         this.tunnelHost = tunnelHost;
         this.tunnelPort = tunnelPort;
         this.keyFile = keyFile;
         this.keyPass = keyPass;
-        this.ss = ss;
     }
 
     // Create a trust manager that does not validate certificate chains
@@ -99,6 +99,14 @@ public class TcpProxyServerThread extends Thread {
     }
 
     public void run() {
+        try {
+            ss = new ServerSocket(listenPort, 50, InetAddress.getLocalHost());
+            Log.d("SSLDroid", "Listening for connections on "+InetAddress.getLocalHost().getHostAddress()+":"+
+                  + this.listenPort + " ...");
+        } catch (Exception e) {
+            Log.d("SSLDroid", "Error setting up listening socket: " + e.toString());
+            return;
+        }
         while (true) {
             try {
                 Thread fromBrowserToServer = null;
