@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="hu.blint.ssldroid" android:versionCode="7"
 	android:versionName="1.2.4">
-	<uses-sdk android:minSdkVersion="7" android:targetSdkVersion="17" />
+	<uses-sdk android:minSdkVersion="9" android:targetSdkVersion="17" />
 	<permission android:name="hu.blint.ssldroid.permission.startstop" android:protectionLevel="normal" android:label="Start and stop the SSLDroid service" />
     <uses-permission android:name="hu.blint.ssldroid.permission.startstop" />
 	<uses-permission android:name="android.permission.INTERNET" />
