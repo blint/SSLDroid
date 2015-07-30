@@ -156,11 +156,7 @@ public class SSLDroidTunnelDetails extends Activity {
                         return;
                     }
                 }
-                if (pkcsfile.getText().length() == 0) {
-                    Toast.makeText(getBaseContext(), "Required PKCS12 file parameter not set up, skipping save", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                else {
+                if (pkcsfile.getText().length() != 0) {
                     // try to open pkcs12 file with password
                     String cPkcsFile = pkcsfile.getText().toString();
                     String cPkcsPass = pkcspass.getText().toString();
@@ -381,9 +377,6 @@ public class SSLDroidTunnelDetails extends Activity {
             return;
         }
         if (sRemoteport == 0) {
-            return;
-        }
-        if (sPkcsfile.length() == 0) {
             return;
         }
 

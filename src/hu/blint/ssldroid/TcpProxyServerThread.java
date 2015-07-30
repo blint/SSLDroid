@@ -65,15 +65,19 @@ public class TcpProxyServerThread extends Thread {
             String pwd, int sessionid) {
         if (sslSocketFactory == null) {
             try {
-                KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("X509");
-                KeyStore keyStore = KeyStore.getInstance("PKCS12");
-                keyStore.load(new FileInputStream(pkcsFile), pwd.toCharArray());
-                keyManagerFactory.init(keyStore, pwd.toCharArray());
+                KeyManagerFactory keyManagerFactory;
+                if (pkcsFile != null && !pkcsFile.isEmpty()) {
+                    keyManagerFactory = KeyManagerFactory.getInstance("X509");
+                    KeyStore keyStore = KeyStore.getInstance("PKCS12");
+                    keyStore.load(new FileInputStream(pkcsFile), pwd.toCharArray());
+                    keyManagerFactory.init(keyStore, pwd.toCharArray());
+                } else {
+                    keyManagerFactory = null;
+                }
                 SSLContext context = SSLContext.getInstance("TLS");
-                context.init(keyManagerFactory.getKeyManagers(), trustAllCerts,
+                context.init(keyManagerFactory == null ? null : keyManagerFactory.getKeyManagers(), trustAllCerts,
                              new SecureRandom());
-                sslSocketFactory = (SSLSocketFactory) context.getSocketFactory();
-
+                sslSocketFactory = context.getSocketFactory();
             } catch (FileNotFoundException e) {
                 Log.d("SSLDroid", tunnelName+"/"+sessionid+": Error loading the client certificate file:"
                       + e.toString());
