@@ -138,8 +138,8 @@ public class SSLDroidGui extends ListActivity {
 
     @SuppressWarnings("unused")
     private void getProvisioning() {
-        Intent i = new Intent(this, SSLDroidProvisioning.class);
-        startActivity(i);
+        //Intent i = new Intent(this, SSLDroidProvisioning.class);
+        //startActivity(i);
     }
     
     // ListView and view (row) on which was clicked, position and
