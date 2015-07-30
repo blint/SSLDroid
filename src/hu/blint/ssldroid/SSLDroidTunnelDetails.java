@@ -28,6 +28,7 @@ import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -41,6 +42,117 @@ import hu.blint.ssldroid.db.SSLDroidDbAdapter;
 //TODO: test connection button
 
 public class SSLDroidTunnelDetails extends Activity {
+
+    private final class SSLDroidTunnelHostnameChecker extends AsyncTask<String, Integer, Boolean> {
+
+	@Override
+	protected Boolean doInBackground(String... params) {
+	        ConnectivityManager conMgr =  (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+                String hostname = params[0];
+
+	        if ( conMgr.getActiveNetworkInfo() != null || conMgr.getActiveNetworkInfo().isAvailable()) {
+	            try {
+	                InetAddress.getByName(hostname);
+	            } catch (UnknownHostException e) {
+	                return false;
+	            }
+	        }
+	        return true;
+	}
+	protected void onPostExecute(Boolean result) {
+	    if (result == false) {
+	        Toast.makeText(getBaseContext(), "Remote host not found, please recheck...", Toast.LENGTH_LONG).show();
+            }
+	}
+    }
+
+    private final class SSLDroidTunnelValidator implements View.OnClickListener {
+	public void onClick(View view) {
+	    if (name.getText().length() == 0) {
+	        Toast.makeText(getBaseContext(), "Required tunnel name parameter not set up, skipping save", Toast.LENGTH_LONG).show();
+	        return;
+	    }
+	    //local port validation
+	    if (localport.getText().length() == 0) {
+	        Toast.makeText(getBaseContext(), "Required local port parameter not set up, skipping save", Toast.LENGTH_LONG).show();
+	        return;
+	    }
+	    else {
+	        //local port should be between 1025-65535
+	        int cPort = 0;
+	        try {
+	            cPort = Integer.parseInt(localport.getText().toString());
+	        } catch (NumberFormatException e) {
+	            Toast.makeText(getBaseContext(), "Local port parameter has invalid number format", Toast.LENGTH_LONG).show();
+	            return;
+	        }
+	        if (cPort < 1025 || cPort > 65535) {
+	            Toast.makeText(getBaseContext(), "Local port parameter not in valid range (1025-65535)", Toast.LENGTH_LONG).show();
+	            return;
+	        }
+	        //check if the requested port is colliding with a port already configured for another tunnel
+	        SSLDroidDbAdapter dbHelper = new SSLDroidDbAdapter(getBaseContext());
+	        dbHelper.open();
+	        Cursor cursor = dbHelper.fetchAllLocalPorts();
+	        startManagingCursor(cursor);
+	        while (cursor.moveToNext()) {
+	            String cDbName = cursor.getString(cursor.getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_NAME));
+	            int cDbPort = cursor.getInt(cursor.getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_LOCALPORT));
+	            if (cPort == cDbPort && !cDbName.contentEquals(name.getText().toString())) {
+	                Toast.makeText(getBaseContext(), "Local port already configured in tunnel '"+cDbName+"', please change...", Toast.LENGTH_LONG).show();
+	                return;
+	            }
+	        }
+	    }
+	    //remote host validation
+	    if (remotehost.getText().length() == 0) {
+	        Toast.makeText(getBaseContext(), "Required remote host parameter not set up, skipping save", Toast.LENGTH_LONG).show();
+	        return;
+	    }
+	    else {
+		//if we have interwebs access, the remote host should exist
+		String hostname = remotehost.getText().toString();
+		new SSLDroidTunnelHostnameChecker().execute(hostname);
+	    }
+
+	    //remote port validation
+	    if (remoteport.getText().length() == 0) {
+	        Toast.makeText(getBaseContext(), "Required remote port parameter not set up, skipping save", Toast.LENGTH_LONG).show();
+	        return;
+	    }
+	    else {
+	        //remote port should be between 1025-65535
+	        int cPort = 0;
+	        try {
+	            cPort = Integer.parseInt(remoteport.getText().toString());
+	        } catch (NumberFormatException e) {
+	            Toast.makeText(getBaseContext(), "Remote port parameter has invalid number format", Toast.LENGTH_LONG).show();
+	            return;
+	        }
+	        if (cPort < 1 || cPort > 65535) {
+	            Toast.makeText(getBaseContext(), "Remote port parameter not in valid range (1-65535)", Toast.LENGTH_LONG).show();
+	            return;
+	        }
+	    }
+	    if (pkcsfile.getText().length() != 0) {
+	        // try to open pkcs12 file with password
+	        String cPkcsFile = pkcsfile.getText().toString();
+	        String cPkcsPass = pkcspass.getText().toString();
+	        try {
+	            if (checkKeys(cPkcsFile, cPkcsPass) == false) {
+	                return;
+	            }
+	        } catch (Exception e) {
+	            Toast.makeText(getBaseContext(), "PKCS12 problem: "+e.getMessage(), Toast.LENGTH_LONG).show();
+	            return;
+	        }
+	    }
+	    saveState();
+	    setResult(RESULT_OK);
+	    finish();
+	}
+    }
+
     private EditText name;
     private EditText localport;
     private EditText remotehost;
@@ -82,103 +194,7 @@ public class SSLDroidTunnelDetails extends Activity {
             doClone = extras.getBoolean("doClone", false);
         }
         populateFields();
-        confirmButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                if (name.getText().length() == 0) {
-                    Toast.makeText(getBaseContext(), "Required tunnel name parameter not set up, skipping save", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                //local port validation
-                if (localport.getText().length() == 0) {
-                    Toast.makeText(getBaseContext(), "Required local port parameter not set up, skipping save", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                else {
-                    //local port should be between 1025-65535
-                    int cPort = 0;
-                    try {
-                        cPort = Integer.parseInt(localport.getText().toString());
-                    } catch (NumberFormatException e) {
-                        Toast.makeText(getBaseContext(), "Local port parameter has invalid number format", Toast.LENGTH_LONG).show();
-                        return;
-                    }
-                    if (cPort < 1025 || cPort > 65535) {
-                        Toast.makeText(getBaseContext(), "Local port parameter not in valid range (1025-65535)", Toast.LENGTH_LONG).show();
-                        return;
-                    }
-                    //check if the requested port is colliding with a port already configured for another tunnel
-                    SSLDroidDbAdapter dbHelper = new SSLDroidDbAdapter(getBaseContext());
-                    dbHelper.open();
-                    Cursor cursor = dbHelper.fetchAllLocalPorts();
-                    startManagingCursor(cursor);
-                    while (cursor.moveToNext()) {
-                        String cDbName = cursor.getString(cursor.getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_NAME));
-                        int cDbPort = cursor.getInt(cursor.getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_LOCALPORT));
-                        if (cPort == cDbPort && !cDbName.contentEquals(name.getText().toString())) {
-                            Toast.makeText(getBaseContext(), "Local port already configured in tunnel '"+cDbName+"', please change...", Toast.LENGTH_LONG).show();
-                            return;
-                        }
-                    }
-                }
-                //remote host validation
-                if (remotehost.getText().length() == 0) {
-                    Toast.makeText(getBaseContext(), "Required remote host parameter not set up, skipping save", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                else {
-                    //if we have interwebs access, the remote host should exist
-                    ConnectivityManager conMgr =  (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-
-                    if ( conMgr.getActiveNetworkInfo() != null || conMgr.getActiveNetworkInfo().isAvailable()) {
-                        try {
-                            InetAddress.getByName(remotehost.getText().toString());
-                        } catch (UnknownHostException e) {
-                            Toast.makeText(getBaseContext(), "Remote host not found, please recheck...", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                }
-                //remote port validation
-                if (remoteport.getText().length() == 0) {
-                    Toast.makeText(getBaseContext(), "Required remote port parameter not set up, skipping save", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                else {
-                    //remote port should be between 1025-65535
-                    int cPort = 0;
-                    try {
-                        cPort = Integer.parseInt(remoteport.getText().toString());
-                    } catch (NumberFormatException e) {
-                        Toast.makeText(getBaseContext(), "Remote port parameter has invalid number format", Toast.LENGTH_LONG).show();
-                        return;
-                    }
-                    if (cPort < 1 || cPort > 65535) {
-                        Toast.makeText(getBaseContext(), "Remote port parameter not in valid range (1-65535)", Toast.LENGTH_LONG).show();
-                        return;
-                    }
-                }
-                if (pkcsfile.getText().length() == 0) {
-                    Toast.makeText(getBaseContext(), "Required PKCS12 file parameter not set up, skipping save", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                else {
-                    // try to open pkcs12 file with password
-                    String cPkcsFile = pkcsfile.getText().toString();
-                    String cPkcsPass = pkcspass.getText().toString();
-                    try {
-                        if (checkKeys(cPkcsFile, cPkcsPass) == false) {
-                            return;
-                        }
-                    } catch (Exception e) {
-                        Toast.makeText(getBaseContext(), "PKCS12 problem: "+e.getMessage(), Toast.LENGTH_LONG).show();
-                        return;
-                    }
-                }
-                saveState();
-                setResult(RESULT_OK);
-                finish();
-            }
-
-        });
+        confirmButton.setOnClickListener(new SSLDroidTunnelValidator());
     }
 
     final List<File> getFileNames(File url, File baseurl)
@@ -381,9 +397,6 @@ public class SSLDroidTunnelDetails extends Activity {
             return;
         }
         if (sRemoteport == 0) {
-            return;
-        }
-        if (sPkcsfile.length() == 0) {
             return;
         }
 
