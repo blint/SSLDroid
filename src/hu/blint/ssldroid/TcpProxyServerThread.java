@@ -128,7 +128,9 @@ public class TcpProxyServerThread extends Thread {
 
                 Socket st = null;
                 try {
-                    st = (SSLSocket) getSocketFactory(this.keyFile, this.keyPass, this.sessionid).createSocket(this.tunnelHost, this.tunnelPort);
+                    final SSLSocketFactory sf = getSocketFactory(this.keyFile, this.keyPass, this.sessionid);
+                    st = (SSLSocket) sf.createSocket(this.tunnelHost, this.tunnelPort);
+                    setSNIHost(sf, (SSLSocket) st, this.tunnelHost);
                     ((SSLSocket) st).startHandshake();
                 } catch (IOException e) {
                     Log.d("SSLDroid", tunnelName+"/"+sessionid+": SSL failure: " + e.toString());
@@ -163,6 +165,18 @@ public class TcpProxyServerThread extends Thread {
 
             } catch (IOException ee) {
                 Log.d("SSLDroid", tunnelName+"/"+sessionid+": Ouch: " + ee.toString());
+            }
+        }
+    }
+
+    private void setSNIHost(final SSLSocketFactory factory, final SSLSocket socket, final String hostname) {
+        if (factory instanceof android.net.SSLCertificateSocketFactory && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            ((android.net.SSLCertificateSocketFactory)factory).setHostname(socket, hostname);
+        } else {
+            try {
+                socket.getClass().getMethod("setHostname", String.class).invoke(socket, hostname);
+            } catch (Throwable e) {
+                // ignore any error, we just can't set the hostname...
             }
         }
     }
