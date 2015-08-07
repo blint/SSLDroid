@@ -9,6 +9,7 @@
     <string name="empty"></string>
     <string name="apply">Apply</string>
     <string name="pkcspass">PKCS12 pass</string>
+    <string name="usesni">Use SNI</string>
     <string name="connection_name">Tunnel name</string>
     <string name="add_tunnel">Add tunnel</string>
     <string name="stop_service">Stop service</string>

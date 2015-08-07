@@ -12,7 +12,7 @@ public class SSLDroidDbHelper extends SQLiteOpenHelper {
     // Database creation sql statement
     private static final String DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS tunnels (_id integer primary key autoincrement, "
             + "name text not null, localport integer not null, remotehost text not null, "
-            + "remoteport integer not null, pkcsfile text not null, pkcspass text, cacertfile text );";
+            + "remoteport integer not null, pkcsfile text not null, pkcspass text, cacertfile text, usesni integer not null );";
     private static final String STATUS_CREATE = "CREATE TABLE IF NOT EXISTS status (name text, value text);";
 
     public SSLDroidDbHelper(Context context) {
@@ -29,14 +29,15 @@ public class SSLDroidDbHelper extends SQLiteOpenHelper {
     // Method is called during an update of the database, e.g. if you increase
     // the database version
     @Override
-    public void onUpgrade(SQLiteDatabase database, int oldVersion,
-                          int newVersion) {
+    public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
         Log.w(SSLDroidDbHelper.class.getName(),
-                "Upgrading database from version " + oldVersion + " to "
-                        + newVersion + ", which will add a status table");
+        		"Upgrading database from version " + oldVersion + " to "
+        				+ newVersion + ", which will add a status table");
         database.execSQL("CREATE TABLE IF NOT EXISTS status (name text, value text);");
-        if (oldVersion < 3)
+        if (oldVersion < 3) {
             database.execSQL("ALTER TABLE tunnels ADD cacertfile text;");
+            database.execSQL("ALTER TABLE tunnels ADD COLUMN usesni integer not null default 1;");
+        }
         onCreate(database);
     }
 }

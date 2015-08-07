@@ -17,6 +17,7 @@ public class SSLDroidDbAdapter {
     public static final String KEY_PKCSFILE = "pkcsfile";
     public static final String KEY_PKCSPASS = "pkcspass";
     public static final String KEY_CACERTFILE = "cacertfile";
+    public static final String KEY_USE_SNI = "usesni";
     public static final String KEY_STATUS_NAME = "name";
     public static final String KEY_STATUS_VALUE = "value";
     private static final String DATABASE_TABLE = "tunnels";
@@ -45,9 +46,9 @@ public class SSLDroidDbAdapter {
      * rowId for that note, otherwise return a -1 to indicate failure.
      */
     public long createTunnel(String name, int localport, String remotehost, int remoteport,
-                             String pkcsfile, String pkcspass, String cacertfile) {
+                             String pkcsfile, String pkcspass, String cacertfile, int usesni) {
         ContentValues initialValues = createContentValues(name, localport, remotehost,
-                                      remoteport, pkcsfile, pkcspass, cacertfile);
+                                      remoteport, pkcsfile, pkcspass, cacertfil, usesni);
 
         return database.insert(DATABASE_TABLE, null, initialValues);
     }
@@ -56,9 +57,9 @@ public class SSLDroidDbAdapter {
      * Update the tunnel
      */
     public boolean updateTunnel(long rowId, String name, int localport, String remotehost,
-                                int remoteport, String pkcsfile, String pkcspass, String cacertfile) {
+                                int remoteport, String pkcsfile, String pkcspass, String cacertfile, int usesni) {
         ContentValues updateValues = createContentValues(name, localport, remotehost,
-                                     remoteport, pkcsfile, pkcspass, cacertfile);
+                                     remoteport, pkcsfile, pkcspass, cacertfile, usesni);
 
         return database.update(DATABASE_TABLE, updateValues, KEY_ROWID + "="
                                + rowId, null) > 0;
@@ -79,7 +80,7 @@ public class SSLDroidDbAdapter {
     public Cursor fetchAllTunnels() {
         return database.query(DATABASE_TABLE, new String[] { KEY_ROWID,
                               KEY_NAME, KEY_LOCALPORT, KEY_REMOTEHOST, KEY_REMOTEPORT, KEY_PKCSFILE,
-                              KEY_PKCSPASS, KEY_CACERTFILE
+                              KEY_PKCSPASS, KEY_CACERTFILE, KEY_USE_SNI
                                                            }, null, null, null, null, null);
     }
 
@@ -124,7 +125,7 @@ public class SSLDroidDbAdapter {
     public Cursor fetchTunnel(long rowId) throws SQLException {
         Cursor mCursor = database.query(true, DATABASE_TABLE, new String[] {
                                             KEY_ROWID, KEY_NAME, KEY_LOCALPORT, KEY_REMOTEHOST, KEY_REMOTEPORT,
-                                            KEY_PKCSFILE, KEY_PKCSPASS, KEY_CACERTFILE
+                                            KEY_PKCSFILE, KEY_PKCSPASS, KEY_CACERTFILE, KEY_USE_SNI
                                         },
                                         KEY_ROWID + "=" + rowId, null, null, null, null, null);
         if (mCursor != null) {
@@ -134,7 +135,7 @@ public class SSLDroidDbAdapter {
     }
     
     private ContentValues createContentValues(String name, int localport, String remotehost, int remoteport,
-            String pkcsfile, String pkcspass, String cacertfile) {
+            String pkcsfile, String pkcspass, String cacertfile, int usesni) {
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, name);
         values.put(KEY_LOCALPORT, localport);
@@ -143,7 +144,6 @@ public class SSLDroidDbAdapter {
         values.put(KEY_REMOTEPORT, remoteport);
         values.put(KEY_PKCSFILE, pkcsfile);
         values.put(KEY_PKCSPASS, pkcspass);
-        values.put(KEY_CACERTFILE, cacertfile);
         return values;
     }
 }

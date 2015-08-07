@@ -70,6 +70,15 @@
 				android:layout_weight="1" android:inputType="textEmailAddress" />
 			<Button android:text="..." android:layout_width="wrap_content" android:id="@+id/pickCaFile" android:layout_height="wrap_content"></Button>
 		</TableRow>
+		<TableRow>
+			<TextView android:text="@string/usesni"
+				android:paddingRight="10dip" android:gravity="right|center_vertical"
+				android:textAppearance="?android:attr/textAppearanceMedium" />
+
+			<CheckBox android:id="@+id/usesni" android:layout_width="fill_parent"
+				android:layout_height="wrap_content" android:layout_weight="1"
+				android:checked="true" />
+		</TableRow>
 		<TableRow android:gravity="center">
 		<Button android:layout_width="fill_parent" android:layout_height="fill_parent" android:gravity="center" android:textAppearance="?android:attr/textAppearanceMedium" android:text="@string/apply" android:id="@+id/tunnel_apply_button"></Button>
 		</TableRow>
