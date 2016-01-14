@@ -123,6 +123,7 @@ public class SSLDroid extends Service {
             notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
         notification.flags |= Notification.FLAG_ONGOING_EVENT;
+        notification.priority = Notification.PRIORITY_MIN;
         notification.tickerText = null;
 
         Intent intent = new Intent(this, SSLDroidGui.class);
