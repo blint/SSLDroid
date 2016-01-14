@@ -5,6 +5,7 @@
     <string name="remote_host">Remote host</string>
     <string name="remote_port">Remote port</string>
     <string name="cert_file">PKCS12 file</string>
+    <string name="cacert_file">CA cert file</string>
     <string name="empty"></string>
     <string name="apply">Apply</string>
     <string name="pkcspass">PKCS12 pass</string>
@@ -15,7 +16,7 @@
     <string name="start_service">Start service</string>
     <string name="no_tunnels">No tunnels configured yet</string>
     <string name="menu_delete">Delete tunnel</string>
-    <string name="pkcsfile_pick">Pick a PKCS12 file from SD card</string>
+    <string name="file_pick">Pick a PKCS12 file from SD card</string>
     <string name="alert_sdcard_absent">No SD card present, please insert one to continue</string>
     <string name="menu_readlogs">Read logs</string>
     <string name="reading_logs">Reading log messages&#8230;</string>

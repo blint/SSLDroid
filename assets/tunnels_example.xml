@@ -6,6 +6,7 @@
 		<remoteport>443</remoteport>
 		<pkcsfile>/sdcard/vpn/user.p12</pkcsfile>
 		<pkcspass></pkcspass>
+		<cacertfile>/sdcard/vpn/cacert.crt</cacertfile>
 	</tunnel>
 	<tunnel name="test2">
 		<localport>9993</localport>
@@ -13,6 +14,6 @@
 		<remoteport>993</remoteport>
 		<pkcsfile>/sdcard/vpn/user.p12</pkcsfile>
 		<pkcspass></pkcspass>
+		<cacertfile>/sdcard/vpn/cacert.crt</cacertfile>
 	</tunnel>
 </tunnels>
-		

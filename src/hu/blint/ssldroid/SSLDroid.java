@@ -38,17 +38,19 @@ public class SSLDroid extends Service {
             String tunnelName = cursor.getString(cursor
                                                  .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_NAME));
             int listenPort = cursor.getInt(cursor
-                                           .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_LOCALPORT));
+                    .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_LOCALPORT));
             int targetPort = cursor.getInt(cursor
                                            .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_REMOTEPORT));
             String targetHost = cursor.getString(cursor
-                                                 .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_REMOTEHOST));
+                    .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_REMOTEHOST));
             String keyFile = cursor.getString(cursor
                                               .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_PKCSFILE));
             String keyPass = cursor.getString(cursor
                                               .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_PKCSPASS));
+            String caFile = cursor.getString(cursor
+                                              .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_CACERTFILE));
             try {
-                tp[i] = new TcpProxy(tunnelName, listenPort, targetHost, targetPort, keyFile, keyPass);
+                tp[i] = new TcpProxy(tunnelName, listenPort, targetHost, targetPort, keyFile, keyPass, caFile);
                 tp[i].serve();
                 Log.d(TAG, "Tunnel: "+tunnelName+" "+listenPort+" "+targetHost+" "+targetPort+" "+keyFile);
             } catch (Exception e) {
