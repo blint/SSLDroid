@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -176,8 +177,9 @@ public class TcpProxyServerThread extends Thread {
 
     public void run() {
         try {
-            ss = new ServerSocket(listenPort, 50, InetAddress.getLocalHost());
-            Log.d("SSLDroid", "Listening for connections on "+InetAddress.getLocalHost().getHostAddress()+":"+
+            InetAddress bindAddr = Inet4Address.getByAddress(new byte[] { 127, 0, 0, 1 });
+            ss = new ServerSocket(listenPort, 50, bindAddr);
+            Log.d("SSLDroid", "Listening for connections on "+bindAddr.getHostAddress()+":"+
                   + this.listenPort + " ...");
         } catch (Exception e) {
             Log.d("SSLDroid", "Error setting up listening socket: " + e.toString());
