@@ -9,7 +9,7 @@ import android.util.Log;
 
 public class Relay extends Thread {
     /**
-     * 
+     *
      */
     private final TcpProxyServerThread tcpProxyServerThread;
     private InputStream in;

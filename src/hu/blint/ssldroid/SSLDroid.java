@@ -14,7 +14,7 @@ import hu.blint.ssldroid.db.SSLDroidDbAdapter;
 public class SSLDroid extends Service {
 
     final String TAG = "SSLDroid";
-    TcpProxy tp[];
+    TcpProxy[] tp;
     private SSLDroidDbAdapter dbHelper;
 
     @Override
@@ -62,7 +62,6 @@ public class SSLDroid extends Service {
             }
         }
 
-        cursor.deactivate();
         cursor.close();
         dbHelper.close();
         createNotification(0, true, "SSLDroid is running", "Started and serving "+tunnelcount+" tunnels");
@@ -113,22 +112,24 @@ public class SSLDroid extends Service {
 
     public void createNotification(int id, boolean persistent, String title, String text) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        Notification notification = new Notification(R.drawable.icon,
-                "SSLDroid startup", System.currentTimeMillis());
-        // if requested, make the notification persistent, e.g. not clearable by the user at all,
-        // automatically hide on displaying the main activity otherwise
-        if (persistent == true)
-            notification.flags |= Notification.FLAG_NO_CLEAR;
-        else
-            notification.flags |= Notification.FLAG_AUTO_CANCEL;
-
-        notification.flags |= Notification.FLAG_ONGOING_EVENT;
-        notification.priority = Notification.PRIORITY_MIN;
-        notification.tickerText = null;
-
+        Notification.Builder builder = new Notification.Builder(SSLDroid.this);
         Intent intent = new Intent(this, SSLDroidGui.class);
         PendingIntent activity = PendingIntent.getActivity(this, 0, intent, 0);
-        notification.setLatestEventInfo(this, title, text, activity);
+        if (persistent == true) {
+            builder.setAutoCancel(false);
+            builder.setPriority(Notification.PRIORITY_MAX);
+        }
+        else
+            builder.setAutoCancel(true);
+        builder.setTicker("SSLDroid startup");
+        builder.setContentTitle(title);
+        builder.setContentText(text);
+        builder.setSmallIcon(R.drawable.icon);
+        builder.setContentIntent(activity);
+        builder.setOngoing(true);
+        builder.setNumber(100);
+
+        Notification notification = builder.build();
         notificationManager.notify(id, notification);
     }
 }
