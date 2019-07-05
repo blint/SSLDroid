@@ -1,20 +1,21 @@
 package hu.blint.ssldroid;
 
-import java.io.IOException;
 import android.util.Log;
 
 /**
  * This is a modified version of the TcpTunnelGui utility borrowed from the
  * xml.apache.org project.
  */
-public class TcpProxy {
-    String tunnelName;
-    int listenPort;
-    String tunnelHost;
-    int tunnelPort;
-    String keyFile, keyPass, caCertFile;
-    boolean useSNI;
-    TcpProxyServerThread server = null;
+class TcpProxy {
+    private final String tunnelName;
+    private final int listenPort;
+    private final String tunnelHost;
+    private final int tunnelPort;
+    private final String keyFile;
+    private final String keyPass;
+    private final String caCertFile;
+    private final boolean useSNI;
+    private TcpProxyServerThread server = null;
 
     public TcpProxy(String tunnelName, int listenPort, String targetHost, int targetPort, String keyFile, String keyPass, String caCertFile, boolean useSNI) {
         this.tunnelName = tunnelName;
@@ -27,7 +28,7 @@ public class TcpProxy {
         this.useSNI = useSNI;
     }
 
-    public void serve() throws IOException {
+    public void serve() {
         server = new TcpProxyServerThread(this.tunnelName, this.listenPort, this.tunnelHost,
                                           this.tunnelPort, this.keyFile, this.keyPass, 
                                           this.caCertFile, this.useSNI);

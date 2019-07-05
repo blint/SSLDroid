@@ -37,6 +37,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import hu.blint.ssldroid.db.SSLDroidDbAdapter;
 
 //TODO: cacert + crl should be configurable for the tunnel
@@ -53,7 +54,9 @@ public class SSLDroidTunnelDetails extends Activity {
 
 	        if ( conMgr.getActiveNetworkInfo() != null || conMgr.getActiveNetworkInfo().isAvailable()) {
 	            try {
-	                InetAddress.getByName(hostname);
+	                InetAddress hostAddress = InetAddress.getByName(hostname);
+                    if (hostAddress.getHostAddress() != "")
+                        return true;
 	            } catch (UnknownHostException e) {
 	                return false;
 	            }
@@ -61,7 +64,7 @@ public class SSLDroidTunnelDetails extends Activity {
 	        return true;
 	}
 	protected void onPostExecute(Boolean result) {
-	    if (result == false) {
+	    if (!result) {
 	        Toast.makeText(getBaseContext(), "Remote host not found, please recheck...", Toast.LENGTH_LONG).show();
             }
 	}
@@ -80,7 +83,7 @@ public class SSLDroidTunnelDetails extends Activity {
 	    }
 	    else {
 	        //local port should be between 1025-65535
-	        int cPort = 0;
+	        int cPort;
 	        try {
 	            cPort = Integer.parseInt(localport.getText().toString());
 	        } catch (NumberFormatException e) {
@@ -123,7 +126,7 @@ public class SSLDroidTunnelDetails extends Activity {
 	    }
 	    else {
 	        //remote port should be between 1025-65535
-	        int cPort = 0;
+	        int cPort;
 	        try {
 	            cPort = Integer.parseInt(remoteport.getText().toString());
 	        } catch (NumberFormatException e) {
@@ -140,7 +143,7 @@ public class SSLDroidTunnelDetails extends Activity {
 	        String cPkcsFile = pkcsfile.getText().toString();
 	        String cPkcsPass = pkcspass.getText().toString();
 	        try {
-	            if (checkKeys(cPkcsFile, cPkcsPass) == false) {
+	            if (!checkKeys(cPkcsFile, cPkcsPass)) {
 	                return;
 	            }
 	        } catch (Exception e) {
@@ -208,9 +211,9 @@ public class SSLDroidTunnelDetails extends Activity {
         confirmButton.setOnClickListener(new SSLDroidTunnelValidator());
     }
 
-    final List<File> getFileNames(File url, File baseurl)
+    private List<File> getFileNames(File url)
     {
-        final List<File> names = new LinkedList<File>();
+        final List<File> names = new LinkedList<>();
         File[] files = url.listFiles();
         if (files != null && files.length > 0) {
             for (File file : url.listFiles()) {
@@ -228,10 +231,10 @@ public class SSLDroidTunnelDetails extends Activity {
         int i = 0;
         while (filelist.hasNext()) {
             File file = filelist.next();
+            namesList[i] = file.getAbsolutePath().replaceFirst(baseurl+"/", "");
             if (file.isDirectory())
-                namesList[i] = file.getAbsolutePath().replaceFirst(baseurl+"/", "")+" (...)";
+                namesList[i] = namesList[i]+" (...)";
             else
-                namesList[i] = file.getAbsolutePath().replaceFirst(baseurl+"/", "");
             i++;
         }
         //Log.d("SSLDroid", "Gathered file names: "+namesList.toString());
@@ -243,7 +246,7 @@ public class SSLDroidTunnelDetails extends Activity {
             public void onClick(DialogInterface arg0, int arg1) {
                 File name = names.get(arg1);
                 if (name.isDirectory()) {
-                    List<File> names_ = getFileNames(name, baseurl);
+                    List<File> names_ = getFileNames(name);
                     Collections.sort(names_);
                     if (names_.size() > 0) {
                         showFiles(names_, baseurl, editBox, nextView);
@@ -264,14 +267,16 @@ public class SSLDroidTunnelDetails extends Activity {
                 if (names.size() == 0)
                     return;
                 File name = names.get(0);
-                if (!name.getParentFile().equals(baseurl)) {
-                    List<File> names_ = getFileNames(name.getParentFile().getParentFile(), baseurl);
-                    Collections.sort(names_);
-                    if (names_.size() > 0) {
-                        showFiles(names_, baseurl, editBox, nextView);
+                File parentfile = name.getParentFile();
+                if (parentfile != null && !parentfile.equals(baseurl)) {
+                    File grandparentfile = parentfile.getParentFile();
+                    if (grandparentfile != null) {
+                        List<File> names_ = getFileNames(grandparentfile);
+                        Collections.sort(names_);
+                        if (names_.size() > 0) {
+                            showFiles(names_, baseurl, editBox, nextView);
+                        }
                     }
-                    else
-                        return;
                 }
             }
         })
@@ -294,8 +299,8 @@ public class SSLDroidTunnelDetails extends Activity {
             return;
         }
 
-        List<File> names = new LinkedList<File>();
-        names = getFileNames(sdcard, sdcard);
+        List<File> names;
+        names = getFileNames(sdcard);
         Collections.sort(names);
         showFiles(names, sdcard, editBox, nextView);
     }
@@ -330,14 +335,14 @@ public class SSLDroidTunnelDetails extends Activity {
         }
     }
 
-    public boolean checkKeys(String inCertPath, String passw) throws Exception {
+    private boolean checkKeys(String inCertPath, String passw) throws Exception {
         try {
             FileInputStream in_cert = new FileInputStream(inCertPath);
             KeyStore myStore = KeyStore.getInstance("PKCS12");
             myStore.load(in_cert, passw.toCharArray());
             Enumeration<String> eAliases = myStore.aliases();
             while (eAliases.hasMoreElements()) {
-                String strAlias = (String) eAliases.nextElement();
+                String strAlias = eAliases.nextElement();
                 if (myStore.isKeyEntry(strAlias)) {
                     // try to retrieve the private key part from PKCS12 certificate
                     myStore.getKey(strAlias, passw.toCharArray());
@@ -379,12 +384,6 @@ public class SSLDroidTunnelDetails extends Activity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        //saveState();
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         populateFields();
@@ -396,12 +395,14 @@ public class SSLDroidTunnelDetails extends Activity {
         try {
             sLocalport = Integer.parseInt(localport.getText().toString());
         } catch (NumberFormatException e) {
+            Log.e("SSLDroid", "Invalid local port number format; format='"+localport.getText().toString()+"'");
         }
         String sRemotehost = remotehost.getText().toString();
         int sRemoteport = 0;
         try {
             sRemoteport = Integer.parseInt(remoteport.getText().toString());
         } catch (NumberFormatException e) {
+            Log.e("SSLDroid", "Invalid remote port number format; format='"+remoteport.getText().toString()+"'");
         }
         String sPkcsfile = pkcsfile.getText().toString();
         String sPkcspass = pkcspass.getText().toString();

@@ -36,7 +36,8 @@ import java.security.Security;
  * Cryptography Architecture primitives. A good place to invoke them is in the
  * application's {@code onCreate}.
  */
-public final class PRNGFixes {
+@SuppressWarnings("PrimitiveArrayArgumentToVarargsMethod")
+final class PRNGFixes {
 
     private static final int VERSION_CODE_JELLY_BEAN = 16;
     private static final int VERSION_CODE_JELLY_BEAN_MR2 = 18;
@@ -76,6 +77,7 @@ public final class PRNGFixes {
                     .invoke(null, generateSeed());
 
             // Mix output of Linux PRNG into OpenSSL's PRNG
+            @SuppressWarnings("ConstantConditions")
             int bytesRead = (Integer) Class.forName(
                     "org.apache.harmony.xnet.provider.jsse.NativeCrypto")
                     .getMethod("RAND_load_file", String.class, long.class)
@@ -148,7 +150,7 @@ public final class PRNGFixes {
 
 	static final long serialVersionUID = 1L;
 	
-        public LinuxPRNGSecureRandomProvider() {
+        LinuxPRNGSecureRandomProvider() {
             super("LinuxPRNG",
                     1.0,
                     "A Linux-specific random number provider that uses"
@@ -166,7 +168,7 @@ public final class PRNGFixes {
      * {@link SecureRandomSpi} which passes all requests to the Linux PRNG
      * ({@code /dev/urandom}).
      */
-    public static class LinuxPRNGSecureRandom extends SecureRandomSpi {
+    static class LinuxPRNGSecureRandom extends SecureRandomSpi {
 
         /*
          * IMPLEMENTATION NOTE: Requests to generate bytes and to mix in a seed
@@ -228,6 +230,7 @@ public final class PRNGFixes {
             }
         }
 
+        @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
         @Override
         protected void engineNextBytes(byte[] bytes) {
             if (!mSeeded) {
@@ -321,6 +324,7 @@ public final class PRNGFixes {
         }
     }
 
+    @SuppressWarnings("CharsetObjectCanBeUsed")
     private static byte[] getBuildFingerprintAndDeviceSerial() {
         StringBuilder result = new StringBuilder();
         String fingerprint = Build.FINGERPRINT;

@@ -59,7 +59,7 @@
 
 			<EditText android:id="@+id/pkcspass" android:layout_width="fill_parent"
 				android:layout_height="wrap_content" android:layout_weight="1"
-				android:password="true" android:hint="Not mandatory" />
+				android:inputType="textPassword" android:hint="Not mandatory" />
 		</TableRow>
 		<TableRow>
 			<TextView android:text="@string/cacert_file"

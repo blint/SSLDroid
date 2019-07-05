@@ -2,28 +2,28 @@ package hu.blint.ssldroid;
 
 import hu.blint.ssldroid.TcpProxy;
 import android.app.*;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 import hu.blint.ssldroid.db.SSLDroidDbAdapter;
 
 public class SSLDroid extends Service {
 
-    final String TAG = "SSLDroid";
-    TcpProxy[] tp;
-    private SSLDroidDbAdapter dbHelper;
+    private final String TAG = "SSLDroid";
+    private TcpProxy[] tp;
+    private SSLDroidDbAdapter dbHelper = new SSLDroidDbAdapter(this);
 
     @Override
     public void onCreate() {
+	    //initialize secure random Generation
+	    PRNGFixes.apply();
 
-	//initialize secure random Generation
-	PRNGFixes.apply();
-	
-        dbHelper = new SSLDroidDbAdapter(this);
         dbHelper.open();
         Cursor cursor = dbHelper.fetchAllTunnels();
 
@@ -113,31 +113,38 @@ public class SSLDroid extends Service {
         Log.d(TAG, "SSLDroid Service Stopped");
     }
 
-    public void removeNotification(int id) {
+    private void removeNotification(int id) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        assert notificationManager != null;
         notificationManager.cancel(id);
     }
 
-    public void createNotification(int id, boolean persistent, String title, String text) {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        Notification.Builder builder = new Notification.Builder(SSLDroid.this);
-        Intent intent = new Intent(this, SSLDroidGui.class);
-        PendingIntent activity = PendingIntent.getActivity(this, 0, intent, 0);
-        if (persistent == true) {
-            builder.setAutoCancel(false);
-            builder.setPriority(Notification.PRIORITY_MAX);
-        }
-        else
-            builder.setAutoCancel(true);
-        builder.setTicker("SSLDroid startup");
-        builder.setContentTitle(title);
-        builder.setContentText(text);
-        builder.setSmallIcon(R.drawable.icon);
-        builder.setContentIntent(activity);
-        builder.setOngoing(true);
-        builder.setNumber(100);
+    private void createNotification(int id, boolean persistent, String title, String text) {
 
-        Notification notification = builder.build();
-        notificationManager.notify(id, notification);
+        Context context = getApplicationContext();
+        Intent mainIntent = new Intent(context, SSLDroidGui.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, mainIntent, 0);
+
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        Notification.Builder builder = new Notification.Builder(context);
+        builder.setSmallIcon(R.drawable.icon)
+                .setContentTitle(title)
+                .setContentText(text)
+                .setWhen(System.currentTimeMillis())
+                .setAutoCancel(true)
+                .setContentIntent(contentIntent)
+                .setPriority(Notification.PRIORITY_HIGH);
+        if (persistent)
+            builder.setOngoing(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String channelId = "REMINDERS";
+            NotificationChannel channel = new NotificationChannel(channelId,
+                    "Reminder",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(channel);
+            builder.setChannelId(channelId);
+        }
+        notificationManager.notify(id, builder.build());
     }
 }

@@ -41,10 +41,10 @@ public class SSLDroidReadLogs extends Activity {
         refreshLogs();
     }
 
-    public void refreshLogs() {
-        TextView logcontainer = (TextView) findViewById(R.id.logTextView);
+    private void refreshLogs() {
+        TextView logcontainer = findViewById(R.id.logTextView);
         logcontainer.setText("");
-        Process mLogcatProc = null;
+        Process mLogcatProc;
         BufferedReader reader = null;
         try {
             mLogcatProc = Runtime.getRuntime().exec(new String[]
@@ -71,9 +71,9 @@ public class SSLDroidReadLogs extends Activity {
         }
     }
     
-    public void shareLogs() {
+    private void shareLogs() {
 	Intent sendIntent = new Intent();
-	TextView logcontainer = (TextView) findViewById(R.id.logTextView);
+	TextView logcontainer = findViewById(R.id.logTextView);
 	CharSequence logdata = logcontainer.getText();
 	
 	sendIntent.setAction(Intent.ACTION_SEND);

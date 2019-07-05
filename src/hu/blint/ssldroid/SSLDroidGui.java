@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+
 import hu.blint.ssldroid.db.SSLDroidDbAdapter;
 
 public class SSLDroidGui extends ListActivity {
@@ -124,7 +125,7 @@ public class SSLDroidGui extends ListActivity {
         startActivityForResult(i, ACTIVITY_CREATE);
     }
 
-    public void cloneTunnel(long id) {
+    private void cloneTunnel(long id) {
         Intent i = new Intent(this, SSLDroidTunnelDetails.class);
         i.putExtra(SSLDroidDbAdapter.KEY_ROWID, id);
         i.putExtra("doClone", true);
@@ -136,12 +137,6 @@ public class SSLDroidGui extends ListActivity {
         startActivity(i);
     }
 
-    @SuppressWarnings("unused")
-    private void getProvisioning() {
-        //Intent i = new Intent(this, SSLDroidProvisioning.class);
-        //startActivity(i);
-    }
-    
     // ListView and view (row) on which was clicked, position and
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
@@ -173,7 +168,7 @@ public class SSLDroidGui extends ListActivity {
 
         // Now create an array adapter and set it to display using our row
         SimpleCursorAdapter tunnels = new SimpleCursorAdapter(this,
-                R.layout.tunnel_list_item, cursor, from, to);
+                R.layout.tunnel_list_item, cursor, from, to, 0);
         setListAdapter(tunnels);
     }
 
@@ -191,5 +186,5 @@ public class SSLDroidGui extends ListActivity {
 	dbHelper.close();
 	super.onDestroy();
     }
-    
+
 }

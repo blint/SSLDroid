@@ -10,7 +10,7 @@ import android.util.Log;
 public class BootStartupReceiver extends BroadcastReceiver {
     
     private boolean isStopped(Context context){
-	Boolean stopped = false;
+	boolean stopped = false;
 	SSLDroidDbAdapter dbHelper;
 	dbHelper = new SSLDroidDbAdapter(context);
         dbHelper.open();

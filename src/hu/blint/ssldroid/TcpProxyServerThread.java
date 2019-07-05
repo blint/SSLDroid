@@ -30,22 +30,24 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.util.Log;
 
-public class TcpProxyServerThread extends Thread {
+class TcpProxyServerThread extends Thread {
 
-    String tunnelName;
-    int listenPort;
-    String tunnelHost;
-    int tunnelPort;
-    String keyFile, keyPass, caFile;
-    boolean useSNI;
+    final String tunnelName;
+    private final int listenPort;
+    private final String tunnelHost;
+    private final int tunnelPort;
+    private final String keyFile;
+    private final String keyPass;
+    private final String caFile;
+    private final boolean useSNI;
     Relay inRelay, outRelay;
     ServerSocket ss = null;
-    int sessionid = 0;
+    private int sessionid = 0;
     private SSLSocketFactory sslSocketFactory;
     private X509Certificate caCert;
 
     public TcpProxyServerThread(String tunnelName, int listenPort, String tunnelHost,
-                                int tunnelPort, String keyFile, String keyPass, String caFile
+                                int tunnelPort, String keyFile, String keyPass, String caFile,
                                 boolean useSNI) {
         this.tunnelName = tunnelName;
         this.listenPort = listenPort;
@@ -125,10 +127,8 @@ public class TcpProxyServerThread extends Thread {
     }
     };
 
-
-
-    public final SSLSocketFactory getSocketFactory(String pkcsFile,
-            String pwd, int sessionid) {
+    private SSLSocketFactory getSocketFactory(String pkcsFile,
+                                              String pwd, int sessionid) {
         if (sslSocketFactory == null) {
             try {
                 KeyManagerFactory keyManagerFactory;
@@ -176,8 +176,8 @@ public class TcpProxyServerThread extends Thread {
         }
         while (true) {
             try {
-                Thread fromBrowserToServer = null;
-                Thread fromServerToBrowser = null;
+                Thread fromBrowserToServer;
+                Thread fromServerToBrowser;
 
                 if (isInterrupted()) {
                     Log.d("SSLDroid", tunnelName+"/"+sessionid+": Interrupted server thread, closing sockets...");
@@ -193,10 +193,10 @@ public class TcpProxyServerThread extends Thread {
                     Log.d("SSLDroid", "Accept failure: " + e.toString());
                 }
 
-                Socket st = null;
+                Socket st;
                 try {
                     final SSLSocketFactory sf = getSocketFactory(this.keyFile, this.keyPass, this.sessionid);
-                    st = (SSLSocket) sf.createSocket(this.tunnelHost, this.tunnelPort);
+                    st = sf.createSocket(this.tunnelHost, this.tunnelPort);
                     if (this.useSNI)
                         setSNIHost(sf, (SSLSocket) st, this.tunnelHost);
                     ((SSLSocket) st).startHandshake();
@@ -213,7 +213,7 @@ public class TcpProxyServerThread extends Thread {
                     return;
                 }
 
-                if (sc == null || st == null) {
+                if (sc == null) {
                     Log.d("SSLDroid", tunnelName+"/"+sessionid+": Trying socket operation on a null socket, returning");
                     return;
                 }
@@ -249,5 +249,5 @@ public class TcpProxyServerThread extends Thread {
             }
         }
     }
-};
+}
 

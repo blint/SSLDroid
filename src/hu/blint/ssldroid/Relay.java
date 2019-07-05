@@ -7,17 +7,17 @@ import java.net.SocketException;
 
 import android.util.Log;
 
-public class Relay extends Thread {
+class Relay extends Thread {
     /**
      *
      */
     private final TcpProxyServerThread tcpProxyServerThread;
-    private InputStream in;
-    private OutputStream out;
-    private String side;
-    private int sessionid;
+    private final InputStream in;
+    private final OutputStream out;
+    private final String side;
+    private final int sessionid;
     private final static int BUFSIZ = 4096;
-    private byte buf[] = new byte[BUFSIZ];
+    private final byte[] buf = new byte[BUFSIZ];
 
     public Relay(TcpProxyServerThread tcpProxyServerThread, InputStream in, OutputStream out, String side, int sessionid) {
         this.tcpProxyServerThread = tcpProxyServerThread;
@@ -28,7 +28,7 @@ public class Relay extends Thread {
     }
 
     public void run() {
-        int n = 0;
+        int n;
 
         try {
             while ((n = in.read(buf)) > 0) {

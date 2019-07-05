@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-public class SSLDroidDbHelper extends SQLiteOpenHelper {
+class SSLDroidDbHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "applicationdata";
     private static final int DATABASE_VERSION = 3;
 
@@ -15,7 +15,7 @@ public class SSLDroidDbHelper extends SQLiteOpenHelper {
             + "remoteport integer not null, pkcsfile text not null, pkcspass text, cacertfile text, usesni integer not null );";
     private static final String STATUS_CREATE = "CREATE TABLE IF NOT EXISTS status (name text, value text);";
 
-    public SSLDroidDbHelper(Context context) {
+    SSLDroidDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
