@@ -29,6 +29,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -425,6 +426,7 @@ public class SSLDroidTunnelDetails extends Activity {
             return;
         }
 
+        Log.d("SSLDroid", "Saving settings...");
         if (rowId == null || doClone) {
             long id = dbHelper.createTunnel(sName, sLocalport, sRemotehost,
                                             sRemoteport, sPkcsfile, sPkcspass, sCacertfile, sUsesni);
@@ -435,13 +437,16 @@ public class SSLDroidTunnelDetails extends Activity {
             dbHelper.updateTunnel(rowId, sName, sLocalport, sRemotehost, sRemoteport,
                                   sPkcsfile, sPkcspass, sCacertfile, sUsesni);
         }
-        Log.d("SSLDroid", "Saving settings...");
 
         //restart the service
-        stopService(new Intent(this, SSLDroid.class));
-        startService(new Intent(this, SSLDroid.class));
         Log.d("SSLDroid", "Restarting service after settings save...");
-
+        stopService(new Intent(this, SSLDroid.class));
+        Intent i = new Intent(this, SSLDroid.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            this.startForegroundService(i);
+        } else {
+            this.startService(i);
+        }
     }
 }
 

@@ -19,10 +19,11 @@ public class SSLDroid extends Service {
     private TcpProxy[] tp;
     private SSLDroidDbAdapter dbHelper = new SSLDroidDbAdapter(this);
 
-    @Override
-    public void onCreate() {
-	    //initialize secure random Generation
-	    PRNGFixes.apply();
+    private int NOTIFICATION_ID = 137;
+
+    public int startServing() {
+        //initialize secure random Generation
+        PRNGFixes.apply();
 
         dbHelper.open();
         Cursor cursor = dbHelper.fetchAllTunnels();
@@ -31,7 +32,7 @@ public class SSLDroid extends Service {
 
         //skip start if the db is empty yet
         if (tunnelcount == 0)
-            return;
+            return 0;
 
         tp = new TcpProxy[tunnelcount];
 
@@ -39,15 +40,15 @@ public class SSLDroid extends Service {
         for (i=0; i<tunnelcount; i++) {
             cursor.moveToPosition(i);
             String tunnelName = cursor.getString(cursor
-                                                 .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_NAME));
+                    .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_NAME));
             int listenPort = cursor.getInt(cursor
                     .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_LOCALPORT));
             int targetPort = cursor.getInt(cursor
-                                           .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_REMOTEPORT));
+                    .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_REMOTEPORT));
             String targetHost = cursor.getString(cursor
                     .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_REMOTEHOST));
             String keyFile = cursor.getString(cursor
-                                              .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_PKCSFILE));
+                    .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_PKCSFILE));
             String keyPass = cursor.getString(cursor
                                               .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_PKCSPASS));
             String caFile = cursor.getString(cursor
@@ -64,28 +65,44 @@ public class SSLDroid extends Service {
             } catch (Exception e) {
                 Log.d(TAG, "Error:" + e.toString());
                 new AlertDialog.Builder(SSLDroid.this)
-                .setTitle("SSLDroid encountered a fatal error: "+e.getMessage())
-                .setPositiveButton(android.R.string.ok, null)
-                .create();
+                        .setTitle("SSLDroid encountered a fatal error: "+e.getMessage())
+                        .setPositiveButton(android.R.string.ok, null)
+                        .create();
             }
         }
 
         cursor.close();
         dbHelper.close();
-        createNotification(0, true, "SSLDroid is running", "Started and serving "+tunnelcount+" tunnels");
         //get the version
         int vcode = 0;
         String vname = "";
         PackageManager manager = this.getPackageManager();
         try {
-	    PackageInfo pkginfo = manager.getPackageInfo(this.getPackageName(), 0);
-	    vname = pkginfo.versionName;
-	    vcode = pkginfo.versionCode;
-	} catch (NameNotFoundException e) {
-	    Log.d(TAG, "Error getting package version; error='"+e.toString()+"'");
-	}
+            PackageInfo pkginfo = manager.getPackageInfo(this.getPackageName(), 0);
+            vname = pkginfo.versionName;
+            vcode = pkginfo.versionCode;
+        } catch (NameNotFoundException e) {
+            Log.d(TAG, "Error getting package version; error='"+e.toString()+"'");
+        }
         //startup message
         Log.d(TAG, "SSLDroid Service Started; version='"+vcode +"', versionname='"+vname+"'");
+        return tunnelcount;
+    }
+
+    public void displayNotification(Notification.Builder builder) {
+        NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(NOTIFICATION_ID, builder.build());
+    }
+
+    @Override
+    public void onCreate() {
+        int tunnelcount = this.startServing();
+        Notification.Builder builder =  createNotification(true, "SSLDroid is running", "Started and serving "+tunnelcount+" tunnel(s)");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForeground(NOTIFICATION_ID, builder.build());
+        }
+        else
+            displayNotification(builder);
     }
 
     @Override
@@ -109,24 +126,21 @@ public class SSLDroid extends Service {
         } catch (Exception e) {
             Log.d("SSLDroid", "Error stopping service: " + e.toString());
         }
-        removeNotification(0);
+        removeNotification();
         Log.d(TAG, "SSLDroid Service Stopped");
     }
 
-    private void removeNotification(int id) {
+    private void removeNotification() {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         assert notificationManager != null;
-        notificationManager.cancel(id);
+        notificationManager.cancel(NOTIFICATION_ID);
     }
 
-    private void createNotification(int id, boolean persistent, String title, String text) {
-
+    private Notification.Builder createNotification(boolean persistent, String title, String text) {
         Context context = getApplicationContext();
         Intent mainIntent = new Intent(context, SSLDroidGui.class);
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, mainIntent, 0);
 
-        NotificationManager notificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification.Builder builder = new Notification.Builder(context);
         builder.setSmallIcon(R.drawable.icon)
                 .setContentTitle(title)
@@ -137,14 +151,14 @@ public class SSLDroid extends Service {
                 .setPriority(Notification.PRIORITY_HIGH);
         if (persistent)
             builder.setOngoing(true);
+        NotificationManager notificationManager =
+                (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String channelId = "REMINDERS";
-            NotificationChannel channel = new NotificationChannel(channelId,
-                    "Reminder",
-                    NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel channel = new NotificationChannel(channelId,"Reminder", NotificationManager.IMPORTANCE_DEFAULT);
             notificationManager.createNotificationChannel(channel);
             builder.setChannelId(channelId);
         }
-        notificationManager.notify(id, builder.build());
+        return builder;
     }
 }

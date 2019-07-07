@@ -3,6 +3,7 @@ package hu.blint.ssldroid;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -64,7 +65,12 @@ public class SSLDroidGui extends ListActivity {
         case R.id.startservice:
             Log.d("SSLDroid", "Starting service");
             dbHelper.delStopStatus();
-            startService(new Intent(this, SSLDroid.class));
+            Intent i = new Intent(this, SSLDroid.class);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                this.startForegroundService(i);
+            } else {
+                this.startService(i);
+            }
             return true;
         case R.id.readlogs:
             readLogs();
@@ -91,7 +97,12 @@ public class SSLDroidGui extends ListActivity {
         case R.id.startservice:
             Log.d("SSLDroid", "Starting service");
             dbHelper.delStopStatus();
-            startService(new Intent(this, SSLDroid.class));
+            Intent i = new Intent(this, SSLDroid.class);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                this.startForegroundService(i);
+            } else {
+                this.startService(i);
+            }
             return true;
         case R.id.readlogs:
             readLogs();

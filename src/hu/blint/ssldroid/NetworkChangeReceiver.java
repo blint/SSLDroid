@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.util.Log;
 
 public class NetworkChangeReceiver extends BroadcastReceiver {
@@ -37,20 +38,21 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService( Context.CONNECTIVITY_SERVICE );
         NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
         if ( activeNetInfo == null ) {
-            Intent i = new Intent();
-            i.setAction("hu.blint.ssldroid.SSLDroid");
+            Intent i = new Intent(context, SSLDroid.class);
             context.stopService(i);
             return;
         }
         Log.d("SSLDroid", activeNetInfo.toString());
         if (activeNetInfo.isAvailable()) {
-            Intent i = new Intent();
-            i.setAction("hu.blint.ssldroid.SSLDroid");
-            context.stopService(i);
+            Intent i = new Intent(context, SSLDroid.class);
             if (!isStopped(context))
-        	context.startService(i);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(i);
+                } else {
+                    context.startService(i);
+                }
             else
-        	Log.w("SSLDroid", "Not starting service as directed by explicit stop");
+                Log.w("SSLDroid", "Not starting service as directed by explicit stop");
         }
     }
 }

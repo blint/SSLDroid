@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.util.Log;
 
 public class BootStartupReceiver extends BroadcastReceiver {
@@ -32,13 +33,14 @@ public class BootStartupReceiver extends BroadcastReceiver {
     
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
-            Intent i = new Intent();
-            i.setAction("hu.blint.ssldroid.SSLDroid");
-            if (!isStopped(context))
+        Intent i = new Intent(context, SSLDroid.class);
+        if (!isStopped(context))
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(i);
+            } else {
                 context.startService(i);
-            else
-        	Log.w("SSLDroid", "Not starting service as directed by explicit stop");
-        }
+            }
+        else
+            Log.w("SSLDroid", "Not starting service as directed by explicit stop");
     }
 }
