@@ -3,3 +3,5 @@ build/
 **.orig
 **.rej
 **.patch
+release/
+debug/
