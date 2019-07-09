@@ -159,6 +159,7 @@ public class SSLDroidTunnelDetails extends Activity {
     private EditText remoteport;
     private EditText pkcsfile;
     private EditText pkcspass;
+    private EditText cacertfile;
     private Long rowId;
     private Boolean doClone = false;
     private SSLDroidDbAdapter dbHelper;
@@ -177,11 +178,18 @@ public class SSLDroidTunnelDetails extends Activity {
         remoteport = (EditText) findViewById(R.id.remoteport);
         pkcsfile = (EditText) findViewById(R.id.pkcsfile);
         pkcspass = (EditText) findViewById(R.id.pkcspass);
+        cacertfile = (EditText) findViewById(R.id.cacertfile);
         Button pickFile = (Button) findViewById(R.id.pickFile);
+        Button pickCaFile = (Button) findViewById(R.id.pickCaFile);
 
         pickFile.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                pickFileSimple();
+                pickFileSimple(pkcsfile, pkcspass);
+            }
+        });
+        pickCaFile.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                pickFileSimple(cacertfile, null);
             }
         });
 
@@ -211,7 +219,7 @@ public class SSLDroidTunnelDetails extends Activity {
         return names;
     }
 
-    private void showFiles(final List<File> names, final File baseurl) {
+    private void showFiles(final List<File> names, final File baseurl, final EditText editBox, final View nextView) {
         final String[] namesList = new String[names.size()]; // = names.toArray(new String[] {});
         ListIterator<File> filelist = names.listIterator();
         int i = 0;
@@ -227,7 +235,7 @@ public class SSLDroidTunnelDetails extends Activity {
 
         // prompt user to select any file from the sdcard root
         new AlertDialog.Builder(SSLDroidTunnelDetails.this)
-        .setTitle(R.string.pkcsfile_pick)
+        .setTitle(R.string.file_pick)
         .setItems(namesList, new OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
                 File name = names.get(arg1);
@@ -235,14 +243,15 @@ public class SSLDroidTunnelDetails extends Activity {
                     List<File> names_ = getFileNames(name, baseurl);
                     Collections.sort(names_);
                     if (names_.size() > 0) {
-                        showFiles(names_, baseurl);
+                        showFiles(names_, baseurl, editBox, nextView);
                     }
                     else
                         Toast.makeText(getBaseContext(), "Empty directory", Toast.LENGTH_LONG).show();
                 }
                 if (name.isFile()) {
-                    pkcsfile.setText(name.getAbsolutePath());
-                    pkcspass.requestFocus();
+                    editBox.setText(name.getAbsolutePath());
+                    if (nextView != null)
+                        nextView.requestFocus();
                 }
             }
         })
@@ -256,7 +265,7 @@ public class SSLDroidTunnelDetails extends Activity {
                     List<File> names_ = getFileNames(name.getParentFile().getParentFile(), baseurl);
                     Collections.sort(names_);
                     if (names_.size() > 0) {
-                        showFiles(names_, baseurl);
+                        showFiles(names_, baseurl, editBox, nextView);
                     }
                     else
                         return;
@@ -267,7 +276,7 @@ public class SSLDroidTunnelDetails extends Activity {
     }
 
     //pick a file from /sdcard, courtesy of ConnectBot
-    private void pickFileSimple() {
+    private void pickFileSimple(final EditText editBox, final View nextView) {
         // build list of all files in sdcard root
         final File sdcard = Environment.getExternalStorageDirectory();
         Log.d("SSLDroid", "SD Card location: "+sdcard.toString());
@@ -285,7 +294,7 @@ public class SSLDroidTunnelDetails extends Activity {
         List<File> names = new LinkedList<File>();
         names = getFileNames(sdcard, sdcard);
         Collections.sort(names);
-        showFiles(names, sdcard);
+        showFiles(names, sdcard, editBox, nextView);
     }
 
     private void populateFields() {
@@ -307,6 +316,8 @@ public class SSLDroidTunnelDetails extends Activity {
                                               .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_PKCSFILE)));
             pkcspass.setText(Tunnel.getString(Tunnel
                                               .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_PKCSPASS)));
+            cacertfile.setText(Tunnel.getString(Tunnel
+                                              .getColumnIndexOrThrow(SSLDroidDbAdapter.KEY_CACERTFILE)));
         }
     }
 
@@ -385,6 +396,7 @@ public class SSLDroidTunnelDetails extends Activity {
         }
         String sPkcsfile = pkcsfile.getText().toString();
         String sPkcspass = pkcspass.getText().toString();
+        String sCacertfile = cacertfile.getText().toString();
 
         //make sure that we have all of our values correctly set
         if (sName.length() == 0) {
@@ -402,13 +414,13 @@ public class SSLDroidTunnelDetails extends Activity {
 
         if (rowId == null || doClone) {
             long id = dbHelper.createTunnel(sName, sLocalport, sRemotehost,
-                                            sRemoteport, sPkcsfile, sPkcspass);
+                                            sRemoteport, sPkcsfile, sPkcspass, sCacertfile);
             if (id > 0) {
                 rowId = id;
             }
         } else {
             dbHelper.updateTunnel(rowId, sName, sLocalport, sRemotehost, sRemoteport,
-                                  sPkcsfile, sPkcspass);
+                                  sPkcsfile, sPkcspass, sCacertfile);
         }
         Log.d("SSLDroid", "Saving settings...");
 

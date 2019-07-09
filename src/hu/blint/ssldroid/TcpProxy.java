@@ -12,21 +12,22 @@ public class TcpProxy {
     int listenPort;
     String tunnelHost;
     int tunnelPort;
-    String keyFile, keyPass;
+    String keyFile, keyPass, caCertFile;
     TcpProxyServerThread server = null;
 
-    public TcpProxy(String tunnelName, int listenPort, String targetHost, int targetPort, String keyFile, String keyPass) {
+    public TcpProxy(String tunnelName, int listenPort, String targetHost, int targetPort, String keyFile, String keyPass, String caCertFile) {
         this.tunnelName = tunnelName;
         this.listenPort = listenPort;
         this.tunnelHost = targetHost;
         this.tunnelPort = targetPort;
         this.keyFile = keyFile;
         this.keyPass = keyPass;
+        this.caCertFile = caCertFile;
     }
 
     public void serve() throws IOException {
         server = new TcpProxyServerThread(this.tunnelName, this.listenPort, this.tunnelHost,
-                                          this.tunnelPort, this.keyFile, this.keyPass);
+                                          this.tunnelPort, this.keyFile, this.keyPass, this.caCertFile);
         server.start();
     }
 
