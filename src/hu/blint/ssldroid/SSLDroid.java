@@ -1,9 +1,17 @@
 package hu.blint.ssldroid;
 
-import hu.blint.ssldroid.TcpProxy;
-import android.app.*;
+import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -11,6 +19,7 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
+
 import hu.blint.ssldroid.db.SSLDroidDbAdapter;
 
 public class SSLDroid extends Service {
@@ -89,14 +98,64 @@ public class SSLDroid extends Service {
         return tunnelcount;
     }
 
+    private boolean isStopped(){
+        Context context = getBaseContext();
+        boolean stopped = false;
+        SSLDroidDbAdapter dbHelper;
+        dbHelper = new SSLDroidDbAdapter(context);
+        dbHelper.open();
+        Cursor cursor = dbHelper.getStopStatus();
+
+        int tunnelcount = cursor.getCount();
+        Log.d("SSLDroid", "Stoppedcount: "+tunnelcount);
+
+        //don't start if the stop status field is available
+        if (tunnelcount != 0){
+            stopped = true;
+        }
+
+        cursor.close();
+        dbHelper.close();
+
+        return stopped;
+    }
+
     public void displayNotification(Notification.Builder builder) {
         NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(NOTIFICATION_ID, builder.build());
     }
 
+    public void createNetworkChangeListener(){
+        Context context = getBaseContext();
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            context.registerReceiver(new NetworkChangeReceiver(null), new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+        }
+        else {
+            Intent startServiceIntent = new Intent(context, NetworkChangeService.class);
+            context.startService(startServiceIntent);
+            Log.d("SSLDroid", "Scheduling network change monitor job");
+            JobInfo myJob = new JobInfo.Builder(0, new ComponentName(context, NetworkChangeService.class))
+                    .setRequiresCharging(true)
+                    .setMinimumLatency(1000)
+                    .setOverrideDeadline(2000)
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                    .setPersisted(true)
+                    .build();
+
+            JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+            jobScheduler.schedule(myJob);
+        }
+    }
+
     @Override
     public void onCreate() {
+        if (isStopped()) {
+            Log.w("SSLDroid", "Not starting service as directed by explicit stop");
+            return;
+        }
         int tunnelcount = this.startServing();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            createNetworkChangeListener();
         Notification.Builder builder =  createNotification(true, "SSLDroid is running", "Started and serving "+tunnelcount+" tunnel(s)");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForeground(NOTIFICATION_ID, builder.build());
@@ -112,7 +171,7 @@ public class SSLDroid extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-	return null;
+	    return null;
     }
 
     @Override

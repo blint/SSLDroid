@@ -239,7 +239,7 @@ class TcpProxyServerThread extends Thread {
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void setSNIHost(final SSLSocketFactory factory, final SSLSocket socket, final String hostname) {
-        if (factory instanceof android.net.SSLCertificateSocketFactory && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        if (factory instanceof android.net.SSLCertificateSocketFactory) {
             ((android.net.SSLCertificateSocketFactory)factory).setHostname(socket, hostname);
         } else {
             try {

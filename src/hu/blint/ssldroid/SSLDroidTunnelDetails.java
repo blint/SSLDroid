@@ -47,28 +47,27 @@ import hu.blint.ssldroid.db.SSLDroidDbAdapter;
 public class SSLDroidTunnelDetails extends Activity {
 
     private final class SSLDroidTunnelHostnameChecker extends AsyncTask<String, Integer, Boolean> {
+        @Override
+        protected Boolean doInBackground(String... params) {
+                ConnectivityManager conMgr =  (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+                    String hostname = params[0];
 
-	@Override
-	protected Boolean doInBackground(String... params) {
-	        ConnectivityManager conMgr =  (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-                String hostname = params[0];
-
-	        if ( conMgr.getActiveNetworkInfo() != null || conMgr.getActiveNetworkInfo().isAvailable()) {
-	            try {
-	                InetAddress hostAddress = InetAddress.getByName(hostname);
-                    if (hostAddress.getHostAddress() != "")
-                        return true;
-	            } catch (UnknownHostException e) {
-	                return false;
-	            }
-	        }
-	        return true;
-	}
-	protected void onPostExecute(Boolean result) {
-	    if (!result) {
-	        Toast.makeText(getBaseContext(), "Remote host not found, please recheck...", Toast.LENGTH_LONG).show();
-            }
-	}
+                if ( conMgr.getActiveNetworkInfo() != null || conMgr.getActiveNetworkInfo().isAvailable()) {
+                    try {
+                        InetAddress hostAddress = InetAddress.getByName(hostname);
+                        if (hostAddress.getHostAddress() != "")
+                            return true;
+                    } catch (UnknownHostException e) {
+                        return false;
+                    }
+                }
+                return true;
+        }
+        protected void onPostExecute(Boolean result) {
+            if (!result) {
+                Toast.makeText(getBaseContext(), "Remote host not found, please recheck...", Toast.LENGTH_LONG).show();
+                }
+        }
     }
 
     private final class SSLDroidTunnelValidator implements View.OnClickListener {
@@ -115,9 +114,9 @@ public class SSLDroidTunnelDetails extends Activity {
 	        return;
 	    }
 	    else {
-		//if we have interwebs access, the remote host should exist
-		String hostname = remotehost.getText().toString();
-		new SSLDroidTunnelHostnameChecker().execute(hostname);
+            //if we have interwebs access, the remote host should exist
+            String hostname = remotehost.getText().toString();
+            new SSLDroidTunnelHostnameChecker().execute(hostname);
 	    }
 
 	    //remote port validation
