@@ -47,7 +47,7 @@ public class SSLDroidDbAdapter {
     public long createTunnel(String name, int localport, String remotehost, int remoteport,
                              String pkcsfile, String pkcspass, String cacertfile, int usesni) {
         ContentValues initialValues = createContentValues(name, localport, remotehost,
-                                      remoteport, pkcsfile, pkcspass, cacertfil, usesni);
+                                      remoteport, pkcsfile, pkcspass, cacertfile, usesni);
 
         return database.insert(DATABASE_TABLE, null, initialValues);
     }
@@ -55,7 +55,7 @@ public class SSLDroidDbAdapter {
     /**
      * Update the tunnel
      */
-    public boolean updateTunnel(long rowId, String name, int localport, String remotehost,
+    public void updateTunnel(long rowId, String name, int localport, String remotehost,
                                 int remoteport, String pkcsfile, String pkcspass, String cacertfile, int usesni) {
         ContentValues updateValues = createContentValues(name, localport, remotehost,
                                      remoteport, pkcsfile, pkcspass, cacertfile, usesni);

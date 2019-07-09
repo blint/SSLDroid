@@ -7,7 +7,7 @@ import android.util.Log;
 
 class SSLDroidDbHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "applicationdata";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     // Database creation sql statement
     private static final String DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS tunnels (_id integer primary key autoincrement, "
@@ -35,8 +35,10 @@ class SSLDroidDbHelper extends SQLiteOpenHelper {
         				+ newVersion + ", which will add a status table");
         database.execSQL("CREATE TABLE IF NOT EXISTS status (name text, value text);");
         if (oldVersion < 3) {
-            database.execSQL("ALTER TABLE tunnels ADD cacertfile text;");
             database.execSQL("ALTER TABLE tunnels ADD COLUMN usesni integer not null default 1;");
+        }
+        if (oldVersion < 4) {
+            database.execSQL("ALTER TABLE tunnels ADD cacertfile text;");
         }
         onCreate(database);
     }

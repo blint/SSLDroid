@@ -11,17 +11,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ea1c37a7-fb10-48c2-a5e5-aded8d0edf71" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/hu/blint/ssldroid/NetworkChangeService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hu/blint/ssldroid/BootStartupReceiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/hu/blint/ssldroid/BootStartupReceiver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hu/blint/ssldroid/NetworkChangeReceiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/hu/blint/ssldroid/NetworkChangeReceiver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroid.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroid.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroidTunnelDetails.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroidTunnelDetails.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hu/blint/ssldroid/TcpProxyServerThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/hu/blint/ssldroid/TcpProxyServerThread.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hu/blint/ssldroid/db/SSLDroidDbAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/hu/blint/ssldroid/db/SSLDroidDbAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hu/blint/ssldroid/db/SSLDroidDbHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/hu/blint/ssldroid/db/SSLDroidDbHelper.java" afterDir="false" />
     </list>
     <list id="a0a0f769-81e8-4b08-aeee-7e0850d9a8fe" name="random: raise PRNG entropy level" comment="random: raise PRNG entropy level&#10;&#10;as described in&#10;https://android-developers.blogspot.com/2013/08/some-securerandom-thoughts.html&#10;&#10;Signed-off-by: blint@blint.hu">
       <changelist_data name="Balint Kovacs" email="blint@blint.hu" date="1437776331000" />
@@ -76,16 +69,13 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/hu/blint/ssldroid/BootStartupReceiver.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="134">
-              <caret line="18" column="14" selection-start-line="18" selection-start-column="14" selection-end-line="18" selection-end-column="14" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state relative-caret-position="425">
+              <caret line="30" column="14" selection-start-line="30" selection-start-column="14" selection-end-line="30" selection-end-column="14" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/hu/blint/ssldroid/NetworkChangeService.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="204">
@@ -98,10 +88,28 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroid.java">
+        <entry file="file://$PROJECT_DIR$/src/hu/blint/ssldroid/db/SSLDroidDbAdapter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="100">
-              <caret line="127" column="55" selection-start-line="127" selection-start-column="55" selection-end-line="127" selection-end-column="55" />
+            <state relative-caret-position="680">
+              <caret line="64" column="5" selection-start-line="64" selection-start-column="5" selection-end-line="64" selection-end-column="5" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/hu/blint/ssldroid/db/SSLDroidDbHelper.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="234">
+              <caret line="41" column="9" lean-forward="true" selection-start-line="41" selection-start-column="9" selection-end-line="41" selection-end-column="9" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroidTunnelDetails.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1528">
+              <caret line="191" column="23" lean-forward="true" selection-start-line="191" selection-start-column="23" selection-end-line="191" selection-end-column="23" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -110,13 +118,19 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroid.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="3247">
+              <caret line="202" column="49" selection-start-line="202" selection-start-column="49" selection-end-line="202" selection-end-column="49" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/hu/blint/ssldroid/NetworkChangeReceiver.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="68">
-              <caret line="10" column="40" selection-start-line="10" selection-start-column="12" selection-end-line="10" selection-end-column="40" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state>
+              <caret line="7" selection-start-line="7" selection-end-line="7" />
             </state>
           </provider>
         </entry>
@@ -147,6 +161,7 @@
       <find>id,</find>
       <find>startser</find>
       <find>ssldroid</find>
+      <find>Upgrading</find>
     </findStrings>
     <dirStrings>
       <dir>C:\Users\blint_dev\StudioProjects\SSLDroid</dir>
@@ -167,10 +182,8 @@
         <option value="$PROJECT_DIR$/res/xml/ssldroid_backup_rules.xml" />
         <option value="$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroidProvisioning.java" />
         <option value="$PROJECT_DIR$/src/hu/blint/ssldroid/Relay.java" />
-        <option value="$PROJECT_DIR$/src/hu/blint/ssldroid/db/SSLDroidDbAdapter.java" />
         <option value="$PROJECT_DIR$/src/hu/blint/ssldroid/PRNGFixes.java" />
         <option value="$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroidReadLogs.java" />
-        <option value="$PROJECT_DIR$/src/hu/blint/ssldroid/db/SSLDroidDbHelper.java" />
         <option value="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" />
         <option value="$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroidNotificationIntentService.java" />
         <option value="$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroidGui.java" />
@@ -178,12 +191,14 @@
         <option value="$PROJECT_DIR$/res/layout/tunnel_details.xml" />
         <option value="$PROJECT_DIR$/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/src/hu/blint/ssldroid/TcpProxyServerThread.java" />
-        <option value="$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroidTunnelDetails.java" />
         <option value="$PROJECT_DIR$/build.gradle" />
         <option value="$PROJECT_DIR$/src/hu/blint/ssldroid/NetworkChangeService.java" />
         <option value="$PROJECT_DIR$/src/hu/blint/ssldroid/NetworkChangeReceiver.java" />
         <option value="$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroid.java" />
         <option value="$PROJECT_DIR$/src/hu/blint/ssldroid/BootStartupReceiver.java" />
+        <option value="$PROJECT_DIR$/src/hu/blint/ssldroid/db/SSLDroidDbAdapter.java" />
+        <option value="$PROJECT_DIR$/src/hu/blint/ssldroid/db/SSLDroidDbHelper.java" />
+        <option value="$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroidTunnelDetails.java" />
       </list>
     </option>
   </component>
@@ -198,6 +213,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="ProjectPane" />
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="AndroidView">
         <subPane>
           <expand>
@@ -224,15 +242,12 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
-      <pane id="ProjectPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="Git.Branch.Popup.ShowAllRemotes" value="true" />
     <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
-    <property name="device.picker.selection" value="Pixel_2_API_26" />
+    <property name="device.picker.selection" value="Pixel_2_API_29" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
     <property name="settings.editor.selected.configurable" value="AndroidSdkUpdater" />
@@ -435,7 +450,7 @@
       <window_info id="Capture Tool" order="7" />
       <window_info id="Resources Explorer" order="8" weight="0.32997987" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32857144" />
+      <window_info active="true" anchor="bottom" id="Find" order="1" visible="true" weight="0.32857144" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32857144" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -444,7 +459,7 @@
       <window_info anchor="bottom" id="Gradle Console" order="7" side_tool="true" weight="0.32934132" />
       <window_info anchor="bottom" id="Android Profiler" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5013441" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Logcat" order="10" sideWeight="0.49865592" visible="true" />
+      <window_info anchor="bottom" id="Logcat" order="10" sideWeight="0.49865592" />
       <window_info anchor="bottom" id="Version Control" order="11" sideWeight="0.496997" weight="0.32857144" />
       <window_info anchor="bottom" id="Terminal" order="12" />
       <window_info anchor="bottom" id="Messages" order="13" sideWeight="0.49197862" weight="0.32922733" />
@@ -596,17 +611,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroidNotificationIntentService.java" />
-    <entry file="file://$PROJECT_DIR$/src/hu/blint/ssldroid/db/SSLDroidDbHelper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="19" column="5" selection-start-line="19" selection-start-column="5" selection-end-line="19" selection-end-column="5" />
-          <folding>
-            <element signature="e#872#873#0" expanded="true" />
-            <element signature="e#941#942#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/hu/blint/ssldroid/TcpProxy.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="816">
@@ -661,13 +665,6 @@
     <entry file="file://$PROJECT_DIR$/.idea/vcs.xml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/hu/blint/ssldroid/db/SSLDroidDbAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-123">
-          <caret line="28" column="17" selection-start-line="28" selection-start-column="17" selection-end-line="28" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/res/layout/tunnel_list.xml">
       <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor" />
@@ -700,16 +697,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroidTunnelDetails.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1511">
-          <caret line="118" column="66" selection-start-line="118" selection-start-column="66" selection-end-line="118" selection-end-column="66" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/hu/blint/ssldroid/TcpProxyServerThread.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="389">
@@ -717,33 +704,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroid.java">
+    <entry file="file://$PROJECT_DIR$/src/hu/blint/ssldroid/BootStartupReceiver.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="100">
-          <caret line="127" column="55" selection-start-line="127" selection-start-column="55" selection-end-line="127" selection-end-column="55" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="425">
+          <caret line="30" column="14" selection-start-line="30" selection-start-column="14" selection-end-line="30" selection-end-column="14" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/hu/blint/ssldroid/BootStartupReceiver.java">
+    <entry file="file://$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroid.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="134">
-          <caret line="18" column="14" selection-start-line="18" selection-start-column="14" selection-end-line="18" selection-end-column="14" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="3247">
+          <caret line="202" column="49" selection-start-line="202" selection-start-column="49" selection-end-line="202" selection-end-column="49" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/hu/blint/ssldroid/NetworkChangeReceiver.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="10" column="40" selection-start-line="10" selection-start-column="12" selection-end-line="10" selection-end-column="40" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state>
+          <caret line="7" selection-start-line="7" selection-end-line="7" />
         </state>
       </provider>
     </entry>
@@ -751,6 +729,30 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="204">
           <caret line="19" column="25" selection-start-line="19" selection-start-column="25" selection-end-line="19" selection-end-column="25" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hu/blint/ssldroid/db/SSLDroidDbAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="680">
+          <caret line="64" column="5" selection-start-line="64" selection-start-column="5" selection-end-line="64" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hu/blint/ssldroid/db/SSLDroidDbHelper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="41" column="9" lean-forward="true" selection-start-line="41" selection-start-column="9" selection-end-line="41" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroidTunnelDetails.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1528">
+          <caret line="191" column="23" lean-forward="true" selection-start-line="191" selection-start-column="23" selection-end-line="191" selection-end-column="23" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

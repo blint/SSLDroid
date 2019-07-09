@@ -41,7 +41,6 @@ import android.widget.Toast;
 
 import hu.blint.ssldroid.db.SSLDroidDbAdapter;
 
-//TODO: cacert + crl should be configurable for the tunnel
 //TODO: test connection button
 
 public class SSLDroidTunnelDetails extends Activity {
