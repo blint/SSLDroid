@@ -189,12 +189,12 @@ public class SSLDroidTunnelDetails extends Activity {
 
         pickFile.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                pickFileSimple(pkcsfile, pkcspass);
+                pickFileSimple(getResources().getString(R.string.key_file_pick), pkcsfile, pkcspass);
             }
         });
         pickCaFile.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                pickFileSimple(cacertfile, null);
+                pickFileSimple(getResources().getString(R.string.ca_file_pick), cacertfile, null);
             }
         });
 
@@ -224,7 +224,7 @@ public class SSLDroidTunnelDetails extends Activity {
         return names;
     }
 
-    private void showFiles(final List<File> names, final File baseurl, final EditText editBox, final View nextView) {
+    private void showFiles(final String title, final List<File> names, final File baseurl, final EditText editBox, final View nextView) {
         final String[] namesList = new String[names.size()]; // = names.toArray(new String[] {});
         ListIterator<File> filelist = names.listIterator();
         int i = 0;
@@ -240,7 +240,7 @@ public class SSLDroidTunnelDetails extends Activity {
 
         // prompt user to select any file from the sdcard root
         new AlertDialog.Builder(SSLDroidTunnelDetails.this)
-        .setTitle(R.string.file_pick)
+        .setTitle(title)
         .setItems(namesList, new OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
                 File name = names.get(arg1);
@@ -248,7 +248,7 @@ public class SSLDroidTunnelDetails extends Activity {
                     List<File> names_ = getFileNames(name);
                     Collections.sort(names_);
                     if (names_.size() > 0) {
-                        showFiles(names_, baseurl, editBox, nextView);
+                        showFiles(title, names_, baseurl, editBox, nextView);
                     }
                     else
                         Toast.makeText(getBaseContext(), "Empty directory", Toast.LENGTH_LONG).show();
@@ -273,7 +273,7 @@ public class SSLDroidTunnelDetails extends Activity {
                         List<File> names_ = getFileNames(grandparentfile);
                         Collections.sort(names_);
                         if (names_.size() > 0) {
-                            showFiles(names_, baseurl, editBox, nextView);
+                            showFiles(title, names_, baseurl, editBox, nextView);
                         }
                     }
                 }
@@ -283,7 +283,7 @@ public class SSLDroidTunnelDetails extends Activity {
     }
 
     //pick a file from /sdcard, courtesy of ConnectBot
-    private void pickFileSimple(final EditText editBox, final View nextView) {
+    private void pickFileSimple(final String title, final EditText editBox, final View nextView) {
         // build list of all files in sdcard root
         final File sdcard = Environment.getExternalStorageDirectory();
         Log.d("SSLDroid", "SD Card location: "+sdcard.toString());
@@ -301,7 +301,7 @@ public class SSLDroidTunnelDetails extends Activity {
         List<File> names;
         names = getFileNames(sdcard);
         Collections.sort(names);
-        showFiles(names, sdcard, editBox, nextView);
+        showFiles(title, names, sdcard, editBox, nextView);
     }
 
     private void populateFields() {
