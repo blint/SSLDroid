@@ -232,7 +232,7 @@ public class SSLDroidTunnelDetails extends Activity {
             if (file.isDirectory())
                 namesList[i] = namesList[i]+" (...)";
             else
-            i++;
+                i++;
         }
         //Log.d("SSLDroid", "Gathered file names: "+namesList.toString());
 

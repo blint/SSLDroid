@@ -15,10 +15,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ea1c37a7-fb10-48c2-a5e5-aded8d0edf71" name="Default" comment="chore(platform): update to gradle 8.9.1">
-      <change afterPath="$PROJECT_DIR$/.idea/modules/SSLDroid.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroidTunnelDetails.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroidTunnelDetails.java" afterDir="false" />
     </list>
     <list id="a0a0f769-81e8-4b08-aeee-7e0850d9a8fe" name="random: raise PRNG entropy level" comment="random: raise PRNG entropy level&#10;&#10;as described in&#10;https://android-developers.blogspot.com/2013/08/some-securerandom-thoughts.html&#10;&#10;Signed-off-by: blint@blint.hu">
       <changelist_data name="Balint Kovacs" email="blint@blint.hu" date="1437776331000" automatic="false" />
@@ -235,7 +233,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Android App.SSLDroid.executor": "Run",
-    "Gradle.SSLDroid [testDebugUnitTest].executor": "Run",
+    "Gradle.SSLDroid [testDebugUnitTest].executor": "Debug",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -253,8 +251,8 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
-      <recent name="hu.blint.ssldroid.db" />
       <recent name="hu.blint.ssldroid" />
+      <recent name="hu.blint.ssldroid.db" />
     </key>
   </component>
   <component name="RunManager" selected="Gradle.SSLDroid [testDebugUnitTest]">
@@ -277,8 +275,7 @@
     </configuration>
     <configuration default="true" type="JUnit" factoryName="JUnit">
       <option name="TEST_OBJECT" value="class" />
-      <option name="VM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -385,7 +382,8 @@
     </configuration>
     <configuration default="true" type="JUnit" factoryName="JUnit">
       <option name="TEST_OBJECT" value="class" />
-      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="VM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
