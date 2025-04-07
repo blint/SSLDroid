@@ -196,7 +196,7 @@ public class SSLDroid extends Service {
     private Notification.Builder createNotification(boolean persistent, String title, String text) {
         Context context = getApplicationContext();
         Intent mainIntent = new Intent(context, SSLDroidGui.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, mainIntent, 0);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, mainIntent, PendingIntent.FLAG_IMMUTABLE);
 
         Notification.Builder builder = new Notification.Builder(context);
         builder.setSmallIcon(R.drawable.icon)

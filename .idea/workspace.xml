@@ -16,7 +16,7 @@
   <component name="ChangeListManager">
     <list default="true" id="ea1c37a7-fb10-48c2-a5e5-aded8d0edf71" name="Default" comment="chore(platform): update to gradle 8.9.1">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroidTunnelDetails.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroidTunnelDetails.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroid.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/hu/blint/ssldroid/SSLDroid.java" afterDir="false" />
     </list>
     <list id="a0a0f769-81e8-4b08-aeee-7e0850d9a8fe" name="random: raise PRNG entropy level" comment="random: raise PRNG entropy level&#10;&#10;as described in&#10;https://android-developers.blogspot.com/2013/08/some-securerandom-thoughts.html&#10;&#10;Signed-off-by: blint@blint.hu">
       <changelist_data name="Balint Kovacs" email="blint@blint.hu" date="1437776331000" automatic="false" />
