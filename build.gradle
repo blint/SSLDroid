@@ -19,7 +19,6 @@ apply plugin: 'com.android.application'
 android {
 
     namespace 'hu.blint.ssldroid'
-    compileSdkVersion 29
 
     sourceSets {
         main {
