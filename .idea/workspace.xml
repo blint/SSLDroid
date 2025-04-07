@@ -14,12 +14,11 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ea1c37a7-fb10-48c2-a5e5-aded8d0edf71" name="Default" comment="chore(platform): remove deprecated compileSdkVersion">
-      <change beforePath="$PROJECT_DIR$/.idea/modules/SSLDroid.androidTest.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/SSLDroid.androidTest.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/SSLDroid.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/SSLDroid.main.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/SSLDroid.unitTest.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/SSLDroid.unitTest.iml" afterDir="false" />
+    <list default="true" id="ea1c37a7-fb10-48c2-a5e5-aded8d0edf71" name="Default" comment="chore(platform): update to gradle 8.9.1">
+      <change afterPath="$PROJECT_DIR$/.idea/modules/SSLDroid.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
     </list>
     <list id="a0a0f769-81e8-4b08-aeee-7e0850d9a8fe" name="random: raise PRNG entropy level" comment="random: raise PRNG entropy level&#10;&#10;as described in&#10;https://android-developers.blogspot.com/2013/08/some-securerandom-thoughts.html&#10;&#10;Signed-off-by: blint@blint.hu">
       <changelist_data name="Balint Kovacs" email="blint@blint.hu" date="1437776331000" automatic="false" />
@@ -158,7 +157,7 @@
     </option>
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="ProjectErrors" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -241,14 +240,23 @@
     "RunOnceActivity.cidr.known.project.marker": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "external.system.has.shared.sources": "true",
     "git-widget-placeholder": "update-to-current-toolchain",
     "kotlin-language-version-configured": "true",
+    "last_directory_selection": "/home/blint/StudioProjects/SSLDroid/src/hu/blint/ssldroid",
+    "run.code.analysis.last.selected.profile": "pProject Default",
     "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="hu.blint.ssldroid.db" />
+      <recent name="hu.blint.ssldroid" />
+    </key>
+  </component>
   <component name="RunManager" selected="Gradle.SSLDroid [testDebugUnitTest]">
     <configuration default="true" type="AndroidJUnit" factoryName="Android JUnit">
       <option name="TEST_OBJECT" value="class" />
@@ -448,7 +456,31 @@
       <option name="project" value="LOCAL" />
       <updated>1744025604982</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="chore(platform): add permission to display notifications">
+      <option name="closed" value="true" />
+      <created>1744025798088</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1744025798088</updated>
+    </task>
+    <task id="LOCAL-00005" summary="chore(platform): add exported property to activities">
+      <option name="closed" value="true" />
+      <created>1744026458462</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1744026458462</updated>
+    </task>
+    <task id="LOCAL-00006" summary="chore(platform): update to gradle 8.9.1">
+      <option name="closed" value="true" />
+      <created>1744026480260</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1744026480260</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TodoView">
@@ -568,7 +600,12 @@
     <MESSAGE value="feat(platform): update to AndroidStudio Meerkat's toolchain" />
     <MESSAGE value="feat(platform): raise targetSdkVersion to 33 as per Play's requirements" />
     <MESSAGE value="chore(platform): remove deprecated compileSdkVersion" />
-    <option name="LAST_COMMIT_MESSAGE" value="chore(platform): remove deprecated compileSdkVersion" />
+    <MESSAGE value="chore(platform): add permission to display notifications" />
+    <MESSAGE value="chore(platform): add exported property to activities" />
+    <MESSAGE value="chore(platform): update to gradle 8.9.1" />
+    <MESSAGE value="fixup! chore(platform): add exported property to activities" />
+    <MESSAGE value="fixup! chore(platform): update to gradle 8.9.1" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixup! chore(platform): update to gradle 8.9.1" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/build/outputs/apk/debug/SSLDroid-debug.apk">
@@ -778,11 +815,6 @@
         <entry key="hu.blint.ssldroid">
           <value>
             <CheckInfo lastCheckTimestamp="1744025323586" />
-          </value>
-        </entry>
-        <entry key="hu.blint.ssldroid.test">
-          <value>
-            <CheckInfo lastCheckTimestamp="1744025345067" />
           </value>
         </entry>
         <entry key="hu.blint.ssldroid.test">
