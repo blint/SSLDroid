@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/SSLDroid.iml" filepath="$PROJECT_DIR$/.idea/modules/SSLDroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/SSLDroid.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/SSLDroid.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/SSLDroid.main.iml" filepath="$PROJECT_DIR$/.idea/modules/SSLDroid.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/SSLDroid.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/SSLDroid.unitTest.iml" />
     </modules>
   </component>
 </project>

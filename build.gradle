@@ -1,22 +1,24 @@
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.1'
+        classpath 'com.android.tools.build:gradle:8.5.2'
     }
 }
 
 allprojects {
     repositories {
-        jcenter()
+        mavenCentral()
         google()
     }
 }
 apply plugin: 'com.android.application'
 
 android {
+
+    namespace 'hu.blint.ssldroid'
     compileSdkVersion 29
 
     sourceSets {
@@ -45,5 +47,9 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 29
+    }
+    buildFeatures {
+        renderScript true
+        aidl true
     }
 }
