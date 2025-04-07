@@ -16,8 +16,6 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
-import hu.blint.ssldroid.db.SSLDroidDbAdapter;
-
 public class SSLDroidGui extends ListActivity {
     private SSLDroidDbAdapter dbHelper;
     private static final int ACTIVITY_CREATE = 0;

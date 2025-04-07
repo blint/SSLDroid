@@ -1,4 +1,4 @@
-package hu.blint.ssldroid.db;
+package hu.blint.ssldroid;
 
 import android.content.ContentValues;
 import android.content.Context;

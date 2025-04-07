@@ -1,4 +1,4 @@
-package hu.blint.ssldroid.db;
+package hu.blint.ssldroid;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

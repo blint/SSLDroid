@@ -20,8 +20,6 @@ import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
-import hu.blint.ssldroid.db.SSLDroidDbAdapter;
-
 public class SSLDroid extends Service {
 
     private final String TAG = "SSLDroid";

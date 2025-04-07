@@ -39,8 +39,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import hu.blint.ssldroid.db.SSLDroidDbAdapter;
-
 //TODO: test connection button
 
 public class SSLDroidTunnelDetails extends Activity {
