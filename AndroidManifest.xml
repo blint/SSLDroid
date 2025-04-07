@@ -15,16 +15,16 @@
 	<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 	<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 	<application android:label="@string/app_name" android:icon="@drawable/icon" android:allowBackup="true" android:fullBackupContent="@xml/ssldroid_backup_rules">
-		<activity android:name="SSLDroidGui" android:label="@string/app_name">
+		<activity android:name="SSLDroidGui" android:label="@string/app_name" android:exported="true">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
 		<activity android:name=".SSLDroidTunnelDetails"
-			android:windowSoftInputMode="stateVisible|adjustResize" />
-		<activity android:name=".SSLDroidReadLogs" />
-		<activity android:name=".SSLDroidProvisioning" />
+			android:windowSoftInputMode="stateVisible|adjustResize" android:exported="true"/>
+		<activity android:name=".SSLDroidReadLogs" android:exported="true" />
+		<activity android:name=".SSLDroidProvisioning" android:exported="true" />
 		<service android:enabled="true" android:name="SSLDroid" android:permission="hu.blint.ssldroid.permission.startstop">
 			<intent-filter>
 				<action android:name="hu.blint.ssldroid.SSLDroid" />
