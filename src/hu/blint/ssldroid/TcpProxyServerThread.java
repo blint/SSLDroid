@@ -26,22 +26,29 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.util.Log;
 
-public class TcpProxyServerThread extends Thread {
+class TcpProxyServerThread extends Thread {
 
-    String tunnelName;
-    int listenPort;
-    String tunnelHost;
-    int tunnelPort;
-    String keyFile, keyPass, caFile;
+    final String tunnelName;
+    private final int listenPort;
+    private final String tunnelHost;
+    private final int tunnelPort;
+    private final String keyFile;
+    private final String keyPass;
+    private final String caFile;
+    private final boolean useSNI;
     Relay inRelay, outRelay;
     ServerSocket ss = null;
-    int sessionid = 0;
+    private int sessionid = 0;
     private SSLSocketFactory sslSocketFactory;
     private X509Certificate caCert;
 
-    public TcpProxyServerThread(String tunnelName, int listenPort, String tunnelHost, int tunnelPort, String keyFile, String keyPass, String caFile) {
+    public TcpProxyServerThread(String tunnelName, int listenPort, String tunnelHost,
+                                int tunnelPort, String keyFile, String keyPass, String caFile,
+                                boolean useSNI) {
         this.tunnelName = tunnelName;
         this.listenPort = listenPort;
         this.tunnelHost = tunnelHost;
@@ -66,24 +73,8 @@ public class TcpProxyServerThread extends Thread {
                 } catch (IOException ex) { }
             }
         }
+        this.useSNI = useSNI;
     }
-
-    // Create a trust manager that does not validate certificate chains
-    // TODO: handle this somehow properly (popup if cert is untrusted?)
-    // TODO: cacert + crl should be configurable
-    /*TrustManager[] trustAllCerts = new TrustManager[] {
-    new X509TrustManager() {
-        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-            return null;
-        }
-        public void checkClientTrusted(
-        java.security.cert.X509Certificate[] certs, String authType) {
-        }
-        public void checkServerTrusted(
-        java.security.cert.X509Certificate[] certs, String authType) {
-        }
-    }
-    };*/
 
     // FIXME: https://stackoverflow.com/questions/6629473/validate-x-509-certificate-agains-concrete-ca-java
     TrustManager[] trustCaCert = new TrustManager[] {
@@ -136,10 +127,8 @@ public class TcpProxyServerThread extends Thread {
     }
     };
 
-
-
-    public final SSLSocketFactory getSocketFactory(String pkcsFile,
-            String pwd, int sessionid) {
+    private SSLSocketFactory getSocketFactory(String pkcsFile,
+                                              String pwd, int sessionid) {
         if (sslSocketFactory == null) {
             try {
                 KeyManagerFactory keyManagerFactory;
@@ -187,8 +176,8 @@ public class TcpProxyServerThread extends Thread {
         }
         while (true) {
             try {
-                Thread fromBrowserToServer = null;
-                Thread fromServerToBrowser = null;
+                Thread fromBrowserToServer;
+                Thread fromServerToBrowser;
 
                 if (isInterrupted()) {
                     Log.d("SSLDroid", tunnelName+"/"+sessionid+": Interrupted server thread, closing sockets...");
@@ -204,11 +193,12 @@ public class TcpProxyServerThread extends Thread {
                     Log.d("SSLDroid", "Accept failure: " + e.toString());
                 }
 
-                Socket st = null;
+                Socket st;
                 try {
                     final SSLSocketFactory sf = getSocketFactory(this.keyFile, this.keyPass, this.sessionid);
-                    st = (SSLSocket) sf.createSocket(this.tunnelHost, this.tunnelPort);
-                    setSNIHost(sf, (SSLSocket) st, this.tunnelHost);
+                    st = sf.createSocket(this.tunnelHost, this.tunnelPort);
+                    if (this.useSNI)
+                        setSNIHost(sf, (SSLSocket) st, this.tunnelHost);
                     ((SSLSocket) st).startHandshake();
                 } catch (IOException e) {
                     Log.d("SSLDroid", tunnelName+"/"+sessionid+": SSL failure: " + e.toString());
@@ -223,7 +213,7 @@ public class TcpProxyServerThread extends Thread {
                     return;
                 }
 
-                if (sc == null || st == null) {
+                if (sc == null) {
                     Log.d("SSLDroid", tunnelName+"/"+sessionid+": Trying socket operation on a null socket, returning");
                     return;
                 }
@@ -247,8 +237,9 @@ public class TcpProxyServerThread extends Thread {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void setSNIHost(final SSLSocketFactory factory, final SSLSocket socket, final String hostname) {
-        if (factory instanceof android.net.SSLCertificateSocketFactory && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        if (factory instanceof android.net.SSLCertificateSocketFactory) {
             ((android.net.SSLCertificateSocketFactory)factory).setHostname(socket, hostname);
         } else {
             try {
@@ -258,5 +249,5 @@ public class TcpProxyServerThread extends Thread {
             }
         }
     }
-};
+}
 

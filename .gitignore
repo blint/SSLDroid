@@ -3,3 +3,9 @@ build/
 **.orig
 **.rej
 **.patch
+release/
+debug/
+# Machine-specific / IDE files that should not be in VCS
+local.properties
+.idea/
+.envrc.local

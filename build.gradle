@@ -1,17 +1,24 @@
 buildscript {
     repositories {
         mavenCentral()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.1.0'
+        classpath 'com.android.tools.build:gradle:8.9.1'
     }
 }
 
+allprojects {
+    repositories {
+        mavenCentral()
+        google()
+    }
+}
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 17
-    buildToolsVersion '22.0.1'
+
+    namespace 'hu.blint.ssldroid'
 
     sourceSets {
         main {
@@ -24,16 +31,56 @@ android {
             assets.srcDirs = ['assets']
         }
 
-        // Move the tests to tests/java, tests/res, etc...
-        instrumentTest.setRoot('tests')
+        // Local JVM unit/e2e tests live outside 'src' so they are not swept up
+        // into the main source set (which uses the whole 'src' tree).
+        test {
+            java.srcDirs = ['tests/java']
+            resources.srcDirs = ['tests/resources']
+        }
 
-        // Move the build types to build-types/<type>
-        // For instance, build-types/debug/java, build-types/debug/AndroidManifest.xml, ...
-        // This moves them out of them default location under src/<type>/... which would
-        // conflict with src/ being used by the main source set.
-        // Adding new build types or product flavors should be accompanied
-        // by a similar customization.
         debug.setRoot('build-types/debug')
         release.setRoot('build-types/release')
     }
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 33
+    }
+
+    compileSdk 35
+
+    buildFeatures {
+        renderScript true
+        aidl true
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+            returnDefaultValues = true
+            all {
+                // Surface the proxy's android.util.Log output in test logs,
+                // which makes CI failures in the e2e tunnel tests diagnosable.
+                systemProperty 'robolectric.logging', 'stdout'
+
+                // Robolectric instruments core classes, so on JDK 17 the test
+                // JVM needs reflective access to these java.base packages.
+                // Without java.net opened, real TLS handshakes in the e2e tests
+                // fail with an InaccessibleObjectException on InetAddress.
+                jvmArgs(
+                    '--add-opens=java.base/java.lang=ALL-UNNAMED',
+                    '--add-opens=java.base/java.util=ALL-UNNAMED',
+                    '--add-opens=java.base/java.io=ALL-UNNAMED',
+                    '--add-opens=java.base/java.net=ALL-UNNAMED',
+                    '--add-opens=java.base/java.security=ALL-UNNAMED',
+                    '--add-opens=java.base/javax.net.ssl=ALL-UNNAMED'
+                )
+            }
+        }
+    }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.robolectric:robolectric:4.14.1'
+    testImplementation 'androidx.test:core:1.6.1'
 }

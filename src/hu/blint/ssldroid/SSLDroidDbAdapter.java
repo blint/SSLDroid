@@ -1,4 +1,4 @@
-package hu.blint.ssldroid.db;
+package hu.blint.ssldroid;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -17,11 +17,12 @@ public class SSLDroidDbAdapter {
     public static final String KEY_PKCSFILE = "pkcsfile";
     public static final String KEY_PKCSPASS = "pkcspass";
     public static final String KEY_CACERTFILE = "cacertfile";
-    public static final String KEY_STATUS_NAME = "name";
-    public static final String KEY_STATUS_VALUE = "value";
+    public static final String KEY_USE_SNI = "usesni";
+    private static final String KEY_STATUS_NAME = "name";
+    private static final String KEY_STATUS_VALUE = "value";
     private static final String DATABASE_TABLE = "tunnels";
     private static final String STATUS_TABLE = "status";
-    private Context context;
+    private final Context context;
     private SQLiteDatabase database;
     private SSLDroidDbHelper dbHelper;
 
@@ -29,10 +30,9 @@ public class SSLDroidDbAdapter {
         this.context = context;
     }
 
-    public SSLDroidDbAdapter open() throws SQLException {
+    public void open() throws SQLException {
         dbHelper = new SSLDroidDbHelper(context);
         database = dbHelper.getWritableDatabase();
-        return this;
     }
 
     public void close() {
@@ -45,9 +45,9 @@ public class SSLDroidDbAdapter {
      * rowId for that note, otherwise return a -1 to indicate failure.
      */
     public long createTunnel(String name, int localport, String remotehost, int remoteport,
-                             String pkcsfile, String pkcspass, String cacertfile) {
+                             String pkcsfile, String pkcspass, String cacertfile, int usesni) {
         ContentValues initialValues = createContentValues(name, localport, remotehost,
-                                      remoteport, pkcsfile, pkcspass, cacertfile);
+                                      remoteport, pkcsfile, pkcspass, cacertfile, usesni);
 
         return database.insert(DATABASE_TABLE, null, initialValues);
     }
@@ -55,20 +55,20 @@ public class SSLDroidDbAdapter {
     /**
      * Update the tunnel
      */
-    public boolean updateTunnel(long rowId, String name, int localport, String remotehost,
-                                int remoteport, String pkcsfile, String pkcspass, String cacertfile) {
+    public void updateTunnel(long rowId, String name, int localport, String remotehost,
+                                int remoteport, String pkcsfile, String pkcspass, String cacertfile, int usesni) {
         ContentValues updateValues = createContentValues(name, localport, remotehost,
-                                     remoteport, pkcsfile, pkcspass, cacertfile);
+                                     remoteport, pkcsfile, pkcspass, cacertfile, usesni);
 
-        return database.update(DATABASE_TABLE, updateValues, KEY_ROWID + "="
-                               + rowId, null) > 0;
+        database.update(DATABASE_TABLE, updateValues, KEY_ROWID + "="
+                + rowId, null);
     }
 
     /**
      * Deletes tunnel
      */
-    public boolean deleteTunnel(long rowId) {
-        return database.delete(DATABASE_TABLE, KEY_ROWID + "=" + rowId, null) > 0;
+    public void deleteTunnel(long rowId) {
+        database.delete(DATABASE_TABLE, KEY_ROWID + "=" + rowId, null);
     }
 
     /**
@@ -79,7 +79,7 @@ public class SSLDroidDbAdapter {
     public Cursor fetchAllTunnels() {
         return database.query(DATABASE_TABLE, new String[] { KEY_ROWID,
                               KEY_NAME, KEY_LOCALPORT, KEY_REMOTEHOST, KEY_REMOTEPORT, KEY_PKCSFILE,
-                              KEY_PKCSPASS, KEY_CACERTFILE
+                              KEY_PKCSPASS, KEY_CACERTFILE, KEY_USE_SNI
                                                            }, null, null, null, null, null);
     }
 
@@ -97,7 +97,7 @@ public class SSLDroidDbAdapter {
     /**
      * Return a Cursor positioned at the defined tunnel
      */
-    public Cursor fetchStatus(String valuename) throws SQLException {
+    private Cursor fetchStatus(String valuename) throws SQLException {
         return database.query(STATUS_TABLE, new String[] {
                                             KEY_STATUS_NAME, KEY_STATUS_VALUE
                                         },
@@ -108,23 +108,23 @@ public class SSLDroidDbAdapter {
         return fetchStatus("stopped");
     }
 
-    public boolean setStopStatus() {
+    @SuppressWarnings("SameReturnValue")
+    public void setStopStatus() {
 	ContentValues stopStatus = new ContentValues();
         stopStatus.put(KEY_STATUS_NAME, "stopped");
         stopStatus.put(KEY_STATUS_VALUE, "yes");
         if (getStopStatus().getCount() == 0)
             database.insert(STATUS_TABLE, null, stopStatus);
-        return true;
     }
     
-    public boolean delStopStatus() {
-        return database.delete(STATUS_TABLE, KEY_STATUS_NAME+"= 'stopped'", null) > 0;
+    public void delStopStatus() {
+        database.delete(STATUS_TABLE, KEY_STATUS_NAME + "= 'stopped'", null);
     }
     
     public Cursor fetchTunnel(long rowId) throws SQLException {
         Cursor mCursor = database.query(true, DATABASE_TABLE, new String[] {
                                             KEY_ROWID, KEY_NAME, KEY_LOCALPORT, KEY_REMOTEHOST, KEY_REMOTEPORT,
-                                            KEY_PKCSFILE, KEY_PKCSPASS, KEY_CACERTFILE
+                                            KEY_PKCSFILE, KEY_PKCSPASS, KEY_CACERTFILE, KEY_USE_SNI
                                         },
                                         KEY_ROWID + "=" + rowId, null, null, null, null, null);
         if (mCursor != null) {
@@ -134,16 +134,16 @@ public class SSLDroidDbAdapter {
     }
     
     private ContentValues createContentValues(String name, int localport, String remotehost, int remoteport,
-            String pkcsfile, String pkcspass, String cacertfile) {
+            String pkcsfile, String pkcspass, String cacertfile, int usesni) {
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, name);
         values.put(KEY_LOCALPORT, localport);
         values.put(KEY_REMOTEHOST, remotehost);
         values.put(KEY_REMOTEPORT, remoteport);
-        values.put(KEY_REMOTEPORT, remoteport);
         values.put(KEY_PKCSFILE, pkcsfile);
         values.put(KEY_PKCSPASS, pkcspass);
         values.put(KEY_CACERTFILE, cacertfile);
+        values.put(KEY_USE_SNI, usesni);
         return values;
     }
 }
