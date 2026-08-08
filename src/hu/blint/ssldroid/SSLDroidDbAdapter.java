@@ -140,9 +140,10 @@ public class SSLDroidDbAdapter {
         values.put(KEY_LOCALPORT, localport);
         values.put(KEY_REMOTEHOST, remotehost);
         values.put(KEY_REMOTEPORT, remoteport);
-        values.put(KEY_REMOTEPORT, remoteport);
         values.put(KEY_PKCSFILE, pkcsfile);
         values.put(KEY_PKCSPASS, pkcspass);
+        values.put(KEY_CACERTFILE, cacertfile);
+        values.put(KEY_USE_SNI, usesni);
         return values;
     }
 }
